@@ -1,3 +1,4 @@
+import { AccessCodePage} from './pages/AcessCodePage';
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
@@ -28,7 +29,7 @@ function FontLoader() {
 
 // Exam flow (registration → exam → done)
 function ExamFlow() {
-  const [stage, setStage] = useState('register');
+  const [stage, setStage] = useState('access');
   const [candidate, setCandidate] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [result, setResult] = useState(null);
@@ -54,7 +55,8 @@ function ExamFlow() {
       toast.error('تعذّر حفظ البيانات — يرجى إبلاغ المشرف');
     }
   };
-
+   
+  if (stage === 'access') return <AccessCodePage onSuccess={() => setStage('register')} />;
   if (stage === 'register') return <RegistrationPage onSubmit={handleRegister} />;
   if (stage === 'exam') return <ExamPage candidate={candidate} questions={questions} onFinish={handleFinish} />;
   if (stage === 'done') return <ThankYouPage candidate={candidate} result={result} saveStatus={saveStatus} />;
