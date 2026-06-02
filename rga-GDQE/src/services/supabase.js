@@ -7,18 +7,7 @@ if (!supabaseUrl || !supabaseKey) {
 console.error('Supabase env variables missing');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey, {
-auth: {
-persistSession: true,
-autoRefreshToken: true,
-detectSessionInUrl: false,
-},
-global: {
-headers: {
-'Content-Type': 'application/json',
-},
-},
-});
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 
 
