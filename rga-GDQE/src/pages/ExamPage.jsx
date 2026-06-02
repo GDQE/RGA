@@ -107,7 +107,7 @@ export function ExamPage({ candidate, questions, onFinish }) {
             <button onClick={() => setCurrentQ(c => Math.max(0,c-1))} disabled={currentQ===0} style={{ padding: '10px 22px', borderRadius: 10, fontSize: 13, cursor: currentQ===0 ? 'not-allowed' : 'pointer', background: 'transparent', border: `1px solid ${C.border}`, color: currentQ===0 ? C.textMuted : C.textSub, fontFamily: font }}>← السابق</button>
             {currentQ < questions.length-1
               ? <button onClick={() => setCurrentQ(c => c+1)} style={{ padding: '10px 26px', borderRadius: 10, fontSize: 13, cursor: 'pointer', background: `linear-gradient(135deg,${C.accent},${C.accentMid})`, color: '#fff', border: 'none', fontWeight: 700, fontFamily: font }}>التالي →</button>
-              : <button onClick={() => setConfirmOpen(true)} style={{ padding: '10px 26px', borderRadius: 10, fontSize: 13, cursor: 'pointer', background: C.success, color: '#fff', border: 'none', fontWeight: 800, fontFamily: font }}>✅ إنهاء الاختبار</button>
+              : <button onClick={() => setConfirmOpen(true)} style={{ padding: '10px 26px', borderRadius: 10, fontSize: 13, cursor: 'pointer', background: C.success, color: '#fff', border: 'none', fontWeight: 800, fontFamily: font }}> إنهاء الاختبار</button>
             }
           </div>
         </div>
