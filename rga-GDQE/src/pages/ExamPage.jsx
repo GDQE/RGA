@@ -145,7 +145,7 @@ export function ExamPage({ candidate, questions, onFinish }) {
       {confirmOpen && (
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.45)', zIndex:300, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}>
           <div style={{ background:C.surface, borderRadius:20, padding:'36px 40px', maxWidth:400, width:'100%', boxShadow:C.shadowLg, direction:'rtl', textAlign:'center' }}>
-            <div style={{ fontSize:44, marginBottom:16 }}>🤔</div>
+            <div style={{ fontSize:44, marginBottom:16 }}></div>
             <h3 style={{ margin:'0 0 10px', fontSize:19, fontWeight:800, color:C.text, fontFamily:font }}>تأكيد إنهاء الاختبار</h3>
             <p style={{ margin:'0 0 24px', color:C.textSub, fontSize:14, lineHeight:1.7, fontFamily:font }}>
               أجبت على <strong style={{color:C.accentMid}}>{answered}</strong> من أصل {questions.length} أسئلة.
