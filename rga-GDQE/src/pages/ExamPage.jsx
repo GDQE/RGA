@@ -5,7 +5,7 @@ export function ExamPage({ candidate, questions, onFinish }) {
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState({});
   const [flagged, setFlagged] = useState(new Set());
-  const [timeLeft, setTimeLeft] = useState(20 * 60);
+  const [timeLeft, setTimeLeft] = useState(15 * 60);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const timerRef = useRef(null);
   const doSubmitRef = useRef(null);
