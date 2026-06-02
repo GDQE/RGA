@@ -17,7 +17,7 @@ export function ThankYouPage({ candidate, result, saveStatus }) {
           <div style={{ background: C.surface, borderRadius: 24, boxShadow: C.shadowLg, border: `1px solid ${C.border}`, overflow: 'hidden' }}>
             <div style={{ height: 6, background: `linear-gradient(90deg,${C.accent},${C.accentLight})` }}/>
             <div style={{ padding: '44px 48px', textAlign: 'center' }}>
-              <div style={{ width: 80, height: 80, borderRadius: '50%', margin: '0 auto 24px', background: C.accentGhost, border: `2px solid ${C.accentLight}44`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 38 }}>✅</div>
+              <div style={{ width: 80, height: 80, borderRadius: '50%', margin: '0 auto 24px', background: C.accentGhost, border: `2px solid ${C.accentLight}44`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 38 }}></div>
               <h2 style={{ margin: '0 0 18px', fontSize: 22, fontWeight: 900, color: C.text, lineHeight: 1.5, fontFamily: font }}>
                 شكرًا لإتمامك الاختبار المبدئي
               </h2>
