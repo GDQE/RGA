@@ -112,35 +112,6 @@ export function ExamPage({ candidate, questions, onFinish }) {
           </div>
         </div>
 
-        {/* Sidebar */}
-        <div style={{ background: C.surface, borderRadius: 16, padding: 18, boxShadow: C.shadow, border: `1px solid ${C.border}`, position: 'sticky', top: 74 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 12, fontFamily: font }}>خريطة الأسئلة</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 6, marginBottom: 16 }}>
-            {questions.map((sq,i) => {
-              const isCur = i===currentQ, isAns = answers[sq.id]!==undefined, isFlg = flagged.has(sq.id);
-              return (
-                <button key={i} onClick={() => setCurrentQ(i)} style={{ width:'100%', aspectRatio:'1', borderRadius:7, fontSize:12, fontWeight:700, cursor:'pointer', background: isCur ? C.accentMid : isFlg ? C.warningBg : isAns ? C.successBg : C.bg, border: `2px solid ${isCur ? C.accentMid : isFlg ? C.warning : isAns ? C.success : C.border}`, color: isCur ? '#fff' : isFlg ? C.warning : isAns ? C.success : C.textMuted }}>{i+1}</button>
-              );
-            })}
-          </div>
-          {[{c:C.accentMid,l:'السؤال الحالي'},{c:C.success,l:'تمت الإجابة'},{c:C.warning,l:'مُعلَّم للمراجعة'},{c:C.border,l:'لم يُجب عنه'}].map(x=>(
-            <div key={x.l} style={{ display:'flex', alignItems:'center', gap:7, marginBottom:6 }}>
-              <div style={{ width:10, height:10, borderRadius:3, background:x.c, flexShrink:0 }}/>
-              <span style={{ fontSize:11, color:C.textMuted, fontFamily:font }}>{x.l}</span>
-            </div>
-          ))}
-          <div style={{ background:C.bg, borderRadius:10, padding:'10px 12px', marginTop:12, fontSize:12, color:C.textSub, fontFamily:font }}>
-            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
-              <span>الإجابات المكتملة</span>
-              <strong style={{ color: answered===questions.length ? C.success : C.accentMid }}>{answered}/{questions.length}</strong>
-            </div>
-            <div style={{ background:C.border, borderRadius:4, height:5 }}>
-              <div style={{ height:'100%', borderRadius:4, background: answered===questions.length ? C.success : C.accentMid, width:`${(answered/questions.length)*100}%`, transition:'width 0.3s' }}/>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Confirm Modal */}
       {confirmOpen && (
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.45)', zIndex:300, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}>
