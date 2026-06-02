@@ -153,7 +153,7 @@ export function ExamPage({ candidate, questions, onFinish }) {
             </p>
             <div style={{ display:'flex', gap:12 }}>
               <button onClick={() => setConfirmOpen(false)} style={{ flex:1, padding:'11px', borderRadius:10, cursor:'pointer', background:'transparent', border:`1px solid ${C.border}`, color:C.textSub, fontSize:14, fontFamily:font }}>رجوع</button>
-              <button onClick={doSubmit} style={{ flex:1, padding:'11px', borderRadius:10, cursor:'pointer', background:C.success, color:'#fff', border:'none', fontSize:14, fontWeight:800, fontFamily:font }}>تسليم الاختبار ✓</button>
+              <button onClick={doSubmit} style={{ flex:1, padding:'11px', borderRadius:10, cursor:'pointer', background:C.success, color:'#fff', border:'none', fontSize:14, fontWeight:800, fontFamily:font }}>تسليم الاختبار </button>
             </div>
           </div>
         </div>
