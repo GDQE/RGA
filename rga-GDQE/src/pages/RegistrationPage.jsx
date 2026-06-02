@@ -31,7 +31,7 @@ export function RegistrationPage({ onSubmit }) {
               <span style={{ fontSize: 12, fontWeight: 700, color: C.accentMid, fontFamily: font }}>اختبار مبدئي للتأهيل للمقابلة النهائية</span>
             </div>
             <h1 style={{ margin: '0 0 6px', fontSize: 26, fontWeight: 900, color: C.text, fontFamily: font }}>تسجيل بيانات المرشح</h1>
-            <p style={{ margin: 0, color: C.textSub, fontSize: 14, fontFamily: font }}>يرجى تعبئة جميع البيانات بدقة قبل الشروع في الاختبار</p>
+            <p style={{ margin: 0, color: C.textSub, fontSize: 14, fontFamily: font }}>يرجى تعبئة جميع البيانات بدقة قبل البدء في الاختبار</p>
           </div>
 
           <div style={{ background: C.surface, borderRadius: 20, padding: '32px 36px', boxShadow: C.shadowLg, border: `1px solid ${C.border}` }}>
@@ -76,7 +76,7 @@ export function RegistrationPage({ onSubmit }) {
                         <span style={{ fontSize: 20 }}>{SPECIALTY_ICONS[sp]}</span>
                         <div>
                           <div style={{ fontSize: 14, fontWeight: 700, color: C.text, fontFamily: font }}>{sp}</div>
-                          <div style={{ fontSize: 11, color: C.textMuted, fontFamily: font }}>10 أسئلة عشوائية • كل سؤال 10 درجات</div>
+                          <div style={{ fontSize: 11, color: C.textMuted, fontFamily: font }}> </div>
                         </div>
                         {form.specialty === sp && <span style={{ marginRight: 'auto', color: C.accentMid, fontWeight: 900, fontSize: 16 }}>✓</span>}
                       </div>
