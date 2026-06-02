@@ -73,7 +73,7 @@ export function ErrorBox({ message }) {
       borderRadius: 8, padding: "10px 14px", marginBottom: 18,
       color: C.danger, fontSize: 13, fontFamily: font
     }}>
-      ⚠️ {message}
+       {message}
     </div>
   );
 }
