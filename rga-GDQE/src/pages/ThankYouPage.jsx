@@ -25,17 +25,17 @@ export function ThankYouPage({ candidate, result, saveStatus }) {
               {/* Save status indicator */}
               {saveStatus === 'saving' && (
                 <div style={{ background: C.accentGhost, border: `1px solid ${C.accentLight}33`, borderRadius: 10, padding: '10px 16px', marginBottom: 16, fontSize: 13, color: C.accentMid, fontFamily: font }}>
-                  ⏳ جارٍ حفظ بياناتك...
+                   جارٍ حفظ بياناتك...
                 </div>
               )}
               {saveStatus === 'saved' && (
                 <div style={{ background: C.successBg, border: `1px solid ${C.success}33`, borderRadius: 10, padding: '10px 16px', marginBottom: 16, fontSize: 13, color: C.success, fontFamily: font }}>
-                  ✅ تم حفظ بياناتك بنجاح
+                   تم حفظ بياناتك بنجاح
                 </div>
               )}
               {saveStatus === 'error' && (
                 <div style={{ background: C.dangerBg, border: `1px solid ${C.danger}33`, borderRadius: 10, padding: '10px 16px', marginBottom: 16, fontSize: 13, color: C.danger, fontFamily: font }}>
-                  ⚠️ تعذّر حفظ البيانات — يرجى إبلاغ المشرف
+                  تعذّر حفظ البيانات — يرجى إبلاغ المشرف
                 </div>
               )}
 
