@@ -75,7 +75,7 @@ export function ThankYouPage({ candidate, result, saveStatus }) {
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: 11, color: C.textMuted, fontFamily: font }}>الأسئلة</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: C.text, fontFamily: font }}>{correct}/{results.length} صحيح</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: C.text, fontFamily: font }}>{results.length}سؤال</div>
                 </div>
               </div>
 
