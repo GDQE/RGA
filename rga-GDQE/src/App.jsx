@@ -1,4 +1,4 @@
-import { AccessCodePage} from './pages/AcessCodePage';
+import { AccessCodePage} from './pages/AccessCodePage';
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
