@@ -66,4 +66,3 @@ color: '#fff', border: 'none', marginTop: 4
 </div>
 );
 }
-
