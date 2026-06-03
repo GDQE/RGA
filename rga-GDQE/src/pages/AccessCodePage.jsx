@@ -25,7 +25,7 @@ return (
 <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 16px' }}>
 <div style={{ width: '100%', maxWidth: 420 }}>
 <div style={{ background: C.surface, borderRadius: 20, padding: '40px 36px', boxShadow: '0 12px 40px rgba(0,0,0,0.12)', border: `1px solid ${C.border}`, textAlign: 'center' }}>
-<div style={{ fontSize: 52, marginBottom: 16 }}>🔐</div>
+<div style={{ fontSize: 52, marginBottom: 16 }}></div>
 <h2 style={{ margin: '0 0 8px', fontSize: 22, fontWeight: 900, color: C.text, fontFamily: font }}>رمز الدخول</h2>
 <p style={{ margin: '0 0 28px', color: C.textMuted, fontSize: 14, fontFamily: font }}>أدخل رمز الدخول الذي حصلت عليه من المشرف</p>
 
