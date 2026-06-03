@@ -129,5 +129,4 @@ export function ExamPage({ candidate, questions, onFinish }) {
           </div>
         </div>
       )}
-       );
-       }
+      
