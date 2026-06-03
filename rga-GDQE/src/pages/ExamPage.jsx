@@ -98,7 +98,7 @@ export function ExamPage({ candidate, questions, onFinish }) {
                     {sel ? '✓' : ['أ','ب','ج','د'][i]}
                   </div>
                   <span style={{ fontSize: 14, color: sel ? C.accent : C.text, fontWeight: sel ? 700 : 400 }}>{opt}</span>
-               
+               </div>
                 </div>
               );
             })}
