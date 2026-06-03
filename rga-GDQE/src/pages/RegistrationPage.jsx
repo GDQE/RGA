@@ -75,8 +75,7 @@ export function RegistrationPage({ onSubmit }) {
                         onMouseLeave={e => { e.currentTarget.style.background = form.specialty === sp ? C.accentGhost : 'transparent'; }}>
                         <span style={{ fontSize: 20 }}>{SPECIALTY_ICONS[sp]}</span>
                         <div>
-                          <div style={{ fontSize: 14, fontWeight: 700, color: C.text, fontFamily: font }}>{sp}</div>
-                          <div style={{ fontSize: 11, color: C.textMuted, fontFamily: font }}> </div>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: C.text, fontFamily: font }}>{sp}</div
                         </div>
                         {form.specialty === sp && <span style={{ marginRight: 'auto', color: C.accentMid, fontWeight: 900, fontSize: 16 }}>✓</span>}
                       </div>
