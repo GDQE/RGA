@@ -99,7 +99,7 @@ export function ExamPage({ candidate, questions, onFinish }) {
                   </div>
                   <span style={{ fontSize: 14, color: sel ? C.accent : C.text, fontWeight: sel ? 700 : 400 }}>{opt}</span>
                 </div>
-                </div>//
+                </div>
               );
             })}
           </div>
