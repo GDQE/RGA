@@ -39,7 +39,7 @@ export function RegistrationPage({ onSubmit }) {
             <TextInput label="الشركة / المنشأة" value={form.company} onChange={v => set('company', v)} placeholder="اسم جهة العمل" required />
             <TextInput label="رقم الهوية / الإقامة" value={form.idNumber} onChange={v => set('idNumber', v.replace(/\D/g, '').slice(0, 10))} placeholder="أدخل 10 أرقام" required />
             <PhoneInput value={form.phone} onChange={v => set('phone', v)} />
-            <TextInput label="الشهادات الإضافية" value={form.certificates} onChange={v => set('certificates', v)} placeholder="مثال: NEBOSH، PMP، ISO 9001 Lead Auditor" hint="اختياري — اذكر شهاداتك المهنية إن وجدت" />
+            <TextInput label="الشهادات الإضافية" value={form.certificates} onChange={v => set('certificates', v)} placeholder="مثال: NEBOSH، PMP، ISO 9001 Lead Auditor" hint=" اذكر شهاداتك المهنية إن وجدت" />
 
             {/* Specialty Dropdown */}
             <div style={{ marginBottom: 24 }}>
