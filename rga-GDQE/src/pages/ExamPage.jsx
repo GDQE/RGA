@@ -43,7 +43,6 @@ export function ExamPage({ candidate, questions, onFinish }) {
 
   return (
     <div style={{ minHeight: '100vh', background: C.bg, direction: 'rtl', fontFamily: font }}>
-      {/* Fixed navbar */}
       <div style={{ position: 'fixed', top: 0, right: 0, left: 0, zIndex: 100, background: C.surface, borderBottom: `1px solid ${C.border}`, boxShadow: C.shadow }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', height: 58, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px' }}>
           <div>
@@ -64,9 +63,7 @@ export function ExamPage({ candidate, questions, onFinish }) {
         </div>
       </div>
 
-      {/* Body */}
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '76px 20px 40px', display: 'grid', gridTemplateColumns: '1fr 256px', gap: 20, alignItems: 'start' }}>
-        {/* Question card */}
+      <div style={{ maxWidth: 800, margin: '0 auto', padding: '76px 20px 40px' }}>
         <div style={{ background: C.surface, borderRadius: 18, padding: '32px 36px', boxShadow: C.shadowMd, border: `1px solid ${C.border}` }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -98,7 +95,6 @@ export function ExamPage({ candidate, questions, onFinish }) {
                     {sel ? '✓' : ['أ','ب','ج','د'][i]}
                   </div>
                   <span style={{ fontSize: 14, color: sel ? C.accent : C.text, fontWeight: sel ? 700 : 400 }}>{opt}</span>
-               </div>
                 </div>
               );
             })}
@@ -108,16 +104,16 @@ export function ExamPage({ candidate, questions, onFinish }) {
             <button onClick={() => setCurrentQ(c => Math.max(0,c-1))} disabled={currentQ===0} style={{ padding: '10px 22px', borderRadius: 10, fontSize: 13, cursor: currentQ===0 ? 'not-allowed' : 'pointer', background: 'transparent', border: `1px solid ${C.border}`, color: currentQ===0 ? C.textMuted : C.textSub, fontFamily: font }}>← السابق</button>
             {currentQ < questions.length-1
               ? <button onClick={() => setCurrentQ(c => c+1)} style={{ padding: '10px 26px', borderRadius: 10, fontSize: 13, cursor: 'pointer', background: `linear-gradient(135deg,${C.accent},${C.accentMid})`, color: '#fff', border: 'none', fontWeight: 700, fontFamily: font }}>التالي →</button>
-              : <button onClick={() => setConfirmOpen(true)} style={{ padding: '10px 26px', borderRadius: 10, fontSize: 13, cursor: 'pointer', background: C.success, color: '#fff', border: 'none', fontWeight: 800, fontFamily: font }}> إنهاء الاختبار</button>
+              : <button onClick={() => setConfirmOpen(true)} style={{ padding: '10px 26px', borderRadius: 10, fontSize: 13, cursor: 'pointer', background: C.success, color: '#fff', border: 'none', fontWeight: 800, fontFamily: font }}>إنهاء الاختبار</button>
             }
           </div>
         </div>
+      </div>
 
-      {/* Confirm Modal */}
       {confirmOpen && (
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.45)', zIndex:300, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}>
           <div style={{ background:C.surface, borderRadius:20, padding:'36px 40px', maxWidth:400, width:'100%', boxShadow:C.shadowLg, direction:'rtl', textAlign:'center' }}>
-            <div style={{ fontSize:44, marginBottom:16 }}></div>
+            <div style={{ fontSize:44, marginBottom:16 }}>📋</div>
             <h3 style={{ margin:'0 0 10px', fontSize:19, fontWeight:800, color:C.text, fontFamily:font }}>تأكيد إنهاء الاختبار</h3>
             <p style={{ margin:'0 0 24px', color:C.textSub, fontSize:14, lineHeight:1.7, fontFamily:font }}>
               أجبت على <strong style={{color:C.accentMid}}>{answered}</strong> من أصل {questions.length} أسئلة.
@@ -125,12 +121,14 @@ export function ExamPage({ candidate, questions, onFinish }) {
             </p>
             <div style={{ display:'flex', gap:12 }}>
               <button onClick={() => setConfirmOpen(false)} style={{ flex:1, padding:'11px', borderRadius:10, cursor:'pointer', background:'transparent', border:`1px solid ${C.border}`, color:C.textSub, fontSize:14, fontFamily:font }}>رجوع</button>
-              <button onClick={doSubmit} style={{ flex:1, padding:'11px', borderRadius:10, cursor:'pointer', background:C.success, color:'#fff', border:'none', fontSize:14, fontWeight:800, fontFamily:font }}>تسليم الاختبار </button>
+              <button onClick={doSubmit} style={{ flex:1, padding:'11px', borderRadius:10, cursor:'pointer', background:C.success, color:'#fff', border:'none', fontSize:14, fontWeight:800, fontFamily:font }}>تسليم الاختبار</button>
             </div>
           </div>
         </div>
       )}
-       );
-        } 
+    </div>
+  );
+}
+
       
       
