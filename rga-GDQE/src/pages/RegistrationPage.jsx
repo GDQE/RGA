@@ -30,7 +30,6 @@ export function RegistrationPage({ onSubmit }) {
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: C.accentGhost, border: `1px solid ${C.accentLight}44`, borderRadius: 20, padding: '5px 16px', marginBottom: 14 }}>
               <span style={{ fontSize: 12, fontWeight: 700, color: C.accentMid, fontFamily: font }}>اختبار مبدئي للتأهيل للمقابلة النهائية</span>
             </div>
-            <h1 style={{ margin: '0 0 6px', fontSize: 26, fontWeight: 900, color: C.text, fontFamily: font }}>تسجيل بيانات المرشح</h1>
             <p style={{ margin: 0, color: C.textSub, fontSize: 14, fontFamily: font }}>يرجى تعبئة جميع البيانات بدقة قبل البدء في الاختبار</p>
           </div>
 
