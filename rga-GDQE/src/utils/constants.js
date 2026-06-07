@@ -2,10 +2,10 @@ export const C = {
   bg: "#F5F6F7",
   surface: "#FFFFFF",
   border: "#E2E6E9",
-  accent: "#2E7D52",        // ← أخضر بدل رمادي
-  accentMid: "#1a4731",     // ← أخضر غامق بدل رمادي
-  accentLight: "#40916c",   // ← أخضر فاتح
-  accentGhost: "#f0f7f3",   // ← أخضر شفاف للخلفية
+  accent: "#2E7D52",    
+  accentMid: "#1a4731",     
+  accentLight: "#40916c", 
+  accentGhost: "#f0f7f3", 
   rgaGreen: "#2E7D52",
   rgaGold: "#B8922A",
   success: "#059669",
