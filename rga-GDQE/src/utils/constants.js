@@ -1,4 +1,4 @@
- Design tokens — matches original project identity
+// Design tokens — matches original project identity
 export const C = {
   bg: "#F5F6F7",
   surface: "#FFFFFF",
