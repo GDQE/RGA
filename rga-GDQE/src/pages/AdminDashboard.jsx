@@ -77,7 +77,7 @@ export function AdminDashboard() {
             <RGALogo size={36} />
             <div>
               <div style={{ color: '#fff', fontSize: 12, fontWeight: 800, fontFamily: font }}>الهيئة العامة للطرق</div>
-              <div style={{ color: '#2E7D52', fontSize: 10, fontFamily: font }}>لوحة الإدارة</div>
+              <div style={{ color: '#2E7D52', fontSize: 10, fontFamily: font }}>لوحة مؤشرات الاداء</div>
             </div>
           </div>
         </div>
@@ -132,8 +132,8 @@ export function AdminDashboard() {
             {/* Stat cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 28 }}>
               <StatCard icon="" label="إجمالي المختبرين" value={stats.stats.total} color={C.accentMid} />
-              <StatCard icon="" label="الناجحون" value={stats.stats.passed} sub={`${stats.stats.total > 0 ? Math.round((stats.stats.passed/stats.stats.total)*100) : 0}% نسبة النجاح`} color={C.success} />
-              <StatCard icon="" label="الراسبون" value={stats.stats.failed} color={C.danger} />
+              <StatCard icon="" label="امؤهلين" value={stats.stats.passed} sub={`${stats.stats.total > 0 ? Math.round((stats.stats.passed/stats.stats.total)*100) : 0}% نسبة النجاح`} color={C.success} />
+              <StatCard icon="" label="غير مؤهلين" value={stats.stats.failed} color={C.danger} />
               <StatCard icon="" label="متوسط الدرجات" value={`${stats.stats.avgScore}%`} color={C.rgaGold} />
               <StatCard icon="" label="أعلى درجة" value={`${stats.stats.maxScore}%`} color="#7C3AED" />
             </div>
@@ -305,8 +305,8 @@ export function AdminDashboard() {
                   <YAxis tick={{ fontSize: 11 }} />
                   <Tooltip contentStyle={{ fontFamily: font, direction: 'rtl' }} />
                   <Legend wrapperStyle={{ fontFamily: font }} />
-                  <Bar dataKey="passed" fill={C.success} name="ناجح" radius={[4,4,0,0]} />
-                  <Bar dataKey="failed" fill={C.danger} name="راسب" radius={[4,4,0,0]} />
+                  <Bar dataKey="passed" fill={C.success} name="مؤهل" radius={[4,4,0,0]} />
+                  <Bar dataKey="failed" fill={C.danger} name="غير مؤهل" radius={[4,4,0,0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
