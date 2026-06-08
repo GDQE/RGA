@@ -22,7 +22,7 @@ export function ResultDetailPage() {
   if (!data) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: font, direction: 'rtl' }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
+        <div style={{ fontSize: 48, marginBottom: 16 }}></div>
         <p style={{ color: C.textMuted }}>لم يتم العثور على النتيجة</p>
         <button onClick={() => navigate('/admin')} style={{ marginTop: 16, padding: '10px 20px', borderRadius: 8, background: C.accentMid, color: '#fff', border: 'none', cursor: 'pointer', fontFamily: font }}>العودة للوحة الإدارة</button>
       </div>
@@ -46,7 +46,7 @@ export function ResultDetailPage() {
       <div style={{ maxWidth: 860, margin: '0 auto' }}>
         {/* Back */}
         <button onClick={() => navigate('/admin')} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 8, border: `1px solid ${C.border}`, background: C.surface, color: C.textSub, fontSize: 13, cursor: 'pointer', marginBottom: 24, fontFamily: font }}>
-          → العودة للوحة الإدارة
+          → العودة للقائمة الرئيسية
         </button>
 
         {/* Header card */}
@@ -58,7 +58,7 @@ export function ResultDetailPage() {
             </div>
             <div style={{ textAlign: 'center', background: data.passed ? C.successBg : C.dangerBg, border: `1px solid ${data.passed ? C.success : C.danger}33`, borderRadius: 12, padding: '12px 20px' }}>
               <div style={{ fontSize: 28, fontWeight: 900, color: data.passed ? C.success : C.danger }}>{data.score}%</div>
-              <Badge color={data.passed ? 'success' : 'danger'}>{data.passed ? '✓ ناجح' : '✗ راسب'}</Badge>
+              <Badge color={data.passed ? 'success' : 'danger'}>{data.passed ? ' مؤهل' : 'غير مؤهل'}</Badge>
             </div>
           </div>
 
@@ -124,7 +124,7 @@ export function ResultDetailPage() {
                                   </span>
                                   {opt}
                                   {isCorrect && <span style={{ marginRight: 'auto', color: C.success, fontSize: 11, fontWeight: 700 }}>✓ الإجابة الصحيحة</span>}
-                                  {isSelected && !isCorrect && <span style={{ marginRight: 'auto', color: C.danger, fontSize: 11, fontWeight: 700 }}>✗ إجابة المختبر</span>}
+                                  {isSelected && !isCorrect && <span style={{ marginRight: 'auto', color: C.danger, fontSize: 11, fontWeight: 700 }}> إجابة المرشح</span>}
                                 </div>
                               );
                             })}
