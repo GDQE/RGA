@@ -85,9 +85,9 @@ export function AdminDashboard() {
         {/* Nav */}
         <nav style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 4 }}>
           {[
-            { id: 'overview', icon: '', label: 'نظرة عامة' },
-            { id: 'results', icon: '', label: 'النتائج والبيانات' },
-            { id: 'charts', icon: '', label: 'التقارير والرسوم' },
+            { id: 'overview', icon: '', label: 'لوحة مؤشرات الاداء' },
+            { id: 'results', icon: '', label: 'النتائج' },
+            { id: 'charts', icon: '', label: 'التقارير' },
           ].map(item => (
             <button key={item.id} onClick={() => setTab(item.id)} style={{
               display: 'flex', alignItems: 'center', gap: 12, padding: '11px 14px',
@@ -119,7 +119,7 @@ export function AdminDashboard() {
         {/* Header */}
         <div style={{ marginBottom: 28 }}>
           <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: C.text, fontFamily: font }}>
-            {tab === 'overview' ? ' نظرة عامة' : tab === 'results' ? ' النتائج والبيانات' : '📈 التقارير والرسوم'}
+            {tab === 'overview' ? ' لوحة مؤشرات الاداء' : tab === 'results'? 'النتائج' : ' التقارير'}
           </h1>
           <p style={{ margin: '4px 0 0', color: C.textMuted, fontSize: 13, fontFamily: font }}>
             نظام اختبار التأهيل — الإدارة العامة للجودة والبيئة
@@ -144,7 +144,7 @@ export function AdminDashboard() {
               <div style={{ display: 'grid', gap: 12 }}>
                 {stats.specialtyStats.map(sp => (
                   <div key={sp.name} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', background: C.bg, borderRadius: 10 }}>
-                    <span style={{ fontSize: 20 }}>{SPECIALTY_ICONS[sp.name] || '📋'}</span>
+                    <span style={{ fontSize: 20 }}>{SPECIALTY_ICONS[sp.name] || ''}</span>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                         <span style={{ fontSize: 13, fontWeight: 700, color: C.text, fontFamily: font }}>{sp.name}</span>
@@ -155,8 +155,8 @@ export function AdminDashboard() {
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-                      <Badge color="success">ناجح: {sp.passed}</Badge>
-                      <Badge color="danger">راسب: {sp.failed}</Badge>
+                      <Badge color="success">مؤهل: {sp.passed}</Badge>
+                      <Badge color="danger">غير مؤهل: {sp.failed}</Badge>
                     </div>
                   </div>
                 ))}
@@ -174,7 +174,7 @@ export function AdminDashboard() {
                   <Tooltip contentStyle={{ fontFamily: font, direction: 'rtl' }} />
                   <Legend wrapperStyle={{ fontFamily: font }} />
                   <Line type="monotone" dataKey="total" stroke={C.accentMid} strokeWidth={2} name="إجمالي" dot={{ r: 4 }} />
-                  <Line type="monotone" dataKey="passed" stroke={C.success} strokeWidth={2} name="ناجح" dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="passed" stroke={C.success} strokeWidth={2} name="مؤهل" dot={{ r: 4 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -233,7 +233,7 @@ export function AdminDashboard() {
                           </td>
                           <td style={{ padding: '12px 16px', fontSize: 14, fontWeight: 900, color: r.score >= 70 ? C.success : C.danger, fontFamily: font }}>{r.score}%</td>
                           <td style={{ padding: '12px 16px' }}>
-                            <Badge color={r.passed ? 'success' : 'danger'}>{r.passed ? '✓ ناجح' : '✗ راسب'}</Badge>
+                            <Badge color={r.passed ? 'success' : 'danger'}>{r.passed ? 'مؤهل' : 'غير مؤهل'}</Badge>
                           </td>
                           <td style={{ padding: '12px 16px', fontSize: 12, color: C.textMuted, fontFamily: font }}>
                             {r.submitted_at ? new Date(r.submitted_at).toLocaleDateString('ar-SA') : '—'}
@@ -268,10 +268,10 @@ export function AdminDashboard() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
             {/* Pass/Fail Pie */}
             <div style={{ background: C.surface, borderRadius: 16, padding: 24, boxShadow: C.shadow, border: `1px solid ${C.border}` }}>
-              <h3 style={{ margin: '0 0 20px', fontSize: 15, fontWeight: 800, color: C.text, fontFamily: font }}>توزيع النجاح والرسوب</h3>
+              <h3 style={{ margin: '0 0 20px', fontSize: 15, fontWeight: 800, color: C.text, fontFamily: font }}>توزيع التأهيل</h3>
               <ResponsiveContainer width="100%" height={240}>
                 <PieChart>
-                  <Pie data={[{ name: 'ناجح', value: stats.stats.passed }, { name: 'راسب', value: stats.stats.failed }]}
+                  <Pie data={[{ name: 'مؤهل', value: stats.stats.passed }, { name: 'غير مؤهل', value: stats.stats.failed }]}
                     cx="50%" cy="50%" outerRadius={90} dataKey="value" label={({name, percent}) => `${name} ${(percent*100).toFixed(0)}%`}>
                     {PIE_COLORS.map((c, i) => <Cell key={i} fill={c} />)}
                   </Pie>
@@ -297,7 +297,7 @@ export function AdminDashboard() {
 
             {/* Passed/failed per specialty */}
             <div style={{ background: C.surface, borderRadius: 16, padding: 24, boxShadow: C.shadow, border: `1px solid ${C.border}`, gridColumn: '1 / -1' }}>
-              <h3 style={{ margin: '0 0 20px', fontSize: 15, fontWeight: 800, color: C.text, fontFamily: font }}>الناجحون والراسبون حسب التخصص</h3>
+              <h3 style={{ margin: '0 0 20px', fontSize: 15, fontWeight: 800, color: C.text, fontFamily: font }}>اتأهيل حسب التخصص</h3>
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={stats.specialtyStats}>
                   <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
