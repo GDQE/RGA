@@ -132,7 +132,7 @@ export function AdminDashboard() {
             {/* Stat cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 28 }}>
               <StatCard icon="" label="إجمالي المختبرين" value={stats.stats.total} color={C.accentMid} />
-              <StatCard icon="" label="امؤهلين" value={stats.stats.passed} sub={`${stats.stats.total > 0 ? Math.round((stats.stats.passed/stats.stats.total)*100) : 0}% نسبة النجاح`} color={C.success} />
+              <StatCard icon="" label="المؤهلين" value={stats.stats.passed} sub={`${stats.stats.total > 0 ? Math.round((stats.stats.passed/stats.stats.total)*100) : 0}% نسبة النجاح`} color={C.success} />
               <StatCard icon="" label="غير مؤهلين" value={stats.stats.failed} color={C.danger} />
               <StatCard icon="" label="متوسط الدرجات" value={`${stats.stats.avgScore}%`} color={C.rgaGold} />
               <StatCard icon="" label="أعلى درجة" value={`${stats.stats.maxScore}%`} color="#7C3AED" />
