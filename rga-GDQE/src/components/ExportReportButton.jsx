@@ -139,7 +139,7 @@ function buildResultsSheet(data) {
     setCell   (ws, r, 4, rec.specialty   || "",       dStyle);
     setNumCell(ws, r, 5, rec.score       || 0,        boldD);
     setNumCell(ws, r, 6, pct,                         pctStyle);
-    setCell   (ws, r, 7, isPassed ? "ناجح" :” راسب", stStyle);
+    setCell   (ws, r, 7, isPassed ? "ناجح":"راسب", stStyle);
     setCell   (ws, r, 8, rec.exam_date   || (rec.created_at ? rec.created_at.slice(0,10) : ""), dStyle);
   });
 
