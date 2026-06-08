@@ -83,7 +83,7 @@ function buildResultsSheet(data) {
     fontColor: "FFFFFFFF", bgColor: "FF1F4E79",
     border: true, wrapText: false,
   });
-  setCell(ws, 0, 0, `تقرير نتائج الاختبارات  |  ${dateStr}`, titleStyle);
+  setCell(ws, 0, 0, `تقرير نتائج التأهيل  |  ${dateStr}`, titleStyle);
 
   // ── صف الملخص (row 1)
   const total   = data.length;
@@ -97,7 +97,7 @@ function buildResultsSheet(data) {
     border: true,
   });
   setCell(ws, 1, 0,
-    `إجمالي المرشحين: ${total}   |   الناجحون: ${passed}   |   الراسبون: ${failed}   |   معدل النجاح: ${total ? ((passed/total)*100).toFixed(1) : 0}%   |   متوسط الدرجات: ${avgScore}`,
+    `إجمالي المرشحين: ${total}   |  المؤهلين: ${passed}   |   غير المؤهلين: ${failed}   |   معدل التأهيل: ${total ? ((passed/total)*100).toFixed(1) : 0}%   |   متوسط الدرجات: ${avgScore}`,
     subStyle
   );
 
@@ -139,7 +139,7 @@ function buildResultsSheet(data) {
     setCell   (ws, r, 4, rec.specialty   || "",       dStyle);
     setNumCell(ws, r, 5, rec.score       || 0,        boldD);
     setNumCell(ws, r, 6, pct,                         pctStyle);
-    setCell   (ws, r, 7, isPassed ? "ناجح":"راسب", stStyle);
+    setCell   (ws, r, 7, isPassed ? "مؤهل":"غير مؤهل", stStyle);
     setCell   (ws, r, 8, rec.exam_date   || (rec.created_at ? rec.created_at.slice(0,10) : ""), dStyle);
   });
 
@@ -317,7 +317,7 @@ function buildDashboardSheet(data) {
   // ─── SECTION: التخصص (cols 0-3, row 8+) ─────────────────
   merge(7, 0, 7, 3);
   setCell(7, 0, "المختبرون حسب التخصص", S.secHdr("FF1F4E79"));
-  ["التخصص","العدد","الناجحون","النسبة %"].forEach((h,c) => setCell(8,c,h,S.colHdr));
+  ["التخصص","العدد","المؤهلين","النسبة %"].forEach((h,c) => setCell(8,c,h,S.colHdr));
 
   const specEntries = Object.entries(specCount).sort(([,a],[,b]) => b-a);
   specEntries.forEach(([spec, cnt], i) => {
@@ -336,7 +336,7 @@ function buildDashboardSheet(data) {
   // ─── SECTION: الجنسية (cols 5-8, row 8+) ─────────────────
   merge(7, 5, 7, 8);
   setCell(7, 5, "المختبرون حسب الجنسية", S.secHdr("FF243F60"));
-  ["الجنسية","العدد","الناجحون","النسبة %"].forEach((h,c) => setCell(8,5+c,h,S.colHdr));
+  ["الجنسية","العدد","المؤهلين","النسبة %"].forEach((h,c) => setCell(8,5+c,h,S.colHdr));
 
   const natEntries = Object.entries(natCount).sort(([,a],[,b]) => b-a);
   natEntries.forEach(([nat, cnt], i) => {
@@ -354,7 +354,7 @@ function buildDashboardSheet(data) {
   // ─── SECTION: الشركة (cols 10-13, row 8+) ────────────────
   merge(7, 10, 7, 13);
   setCell(7, 10, "المختبرون حسب الشركة", S.secHdr("FF004B50"));
-  ["الشركة","العدد","الناجحون","النسبة %"].forEach((h,c) => setCell(8,10+c,h,S.colHdr));
+  ["الشركة","العدد","المؤهلين","النسبة %"].forEach((h,c) => setCell(8,10+c,h,S.colHdr));
 
   const compEntries = Object.entries(compCount).sort(([,a],[,b]) => b-a);
   compEntries.forEach(([comp, cnt], i) => {
@@ -463,7 +463,7 @@ export default function ExportReportButton({
     }
     try {
       setStatus("loading");
-      setMessage("جارٍ جلب البيانات من قاعدة البيانات...");
+      setMessage("جارٍ تصدير البيانات من قاعدة البيانات...");
 
       const data = await fetchAllResults(supabaseUrl, supabaseKey);
 
@@ -474,7 +474,7 @@ export default function ExportReportButton({
       }
 
       setCount(data.length);
-      setMessage(`تم جلب ${data.length} سجل. جارٍ إنشاء ملف Excel...`);
+      setMessage(`تم التصدير ${data.length} سجل. جارٍ إنشاء ملف Excel...`);
 
       await generateExcel(data);
 
