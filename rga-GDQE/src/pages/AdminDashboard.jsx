@@ -1,3 +1,4 @@
+import ExportReportButton from '../components/ExportReportButton';
 import { useState, useEffect } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -84,9 +85,9 @@ export function AdminDashboard() {
         {/* Nav */}
         <nav style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 4 }}>
           {[
-            { id: 'overview', icon: '📊', label: 'نظرة عامة' },
-            { id: 'results', icon: '📋', label: 'النتائج والبيانات' },
-            { id: 'charts', icon: '📈', label: 'التقارير والرسوم' },
+            { id: 'overview', icon: '', label: 'نظرة عامة' },
+            { id: 'results', icon: '', label: 'النتائج والبيانات' },
+            { id: 'charts', icon: '', label: 'التقارير والرسوم' },
           ].map(item => (
             <button key={item.id} onClick={() => setTab(item.id)} style={{
               display: 'flex', alignItems: 'center', gap: 12, padding: '11px 14px',
@@ -108,7 +109,7 @@ export function AdminDashboard() {
             borderRadius: 10, cursor: 'pointer', border: '1px solid rgba(255,255,255,0.12)',
             background: 'transparent', color: 'rgba(255,255,255,0.5)', fontSize: 13, fontFamily: font, width: '100%'
           }}>
-            🚪 تسجيل الخروج
+             تسجيل الخروج
           </button>
         </div>
       </div>
@@ -118,7 +119,7 @@ export function AdminDashboard() {
         {/* Header */}
         <div style={{ marginBottom: 28 }}>
           <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: C.text, fontFamily: font }}>
-            {tab === 'overview' ? '📊 نظرة عامة' : tab === 'results' ? '📋 النتائج والبيانات' : '📈 التقارير والرسوم'}
+            {tab === 'overview' ? ' نظرة عامة' : tab === 'results' ? ' النتائج والبيانات' : '📈 التقارير والرسوم'}
           </h1>
           <p style={{ margin: '4px 0 0', color: C.textMuted, fontSize: 13, fontFamily: font }}>
             نظام اختبار التأهيل — الإدارة العامة للجودة والبيئة
@@ -130,11 +131,11 @@ export function AdminDashboard() {
           <div>
             {/* Stat cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 28 }}>
-              <StatCard icon="👥" label="إجمالي المختبرين" value={stats.stats.total} color={C.accentMid} />
-              <StatCard icon="✅" label="الناجحون" value={stats.stats.passed} sub={`${stats.stats.total > 0 ? Math.round((stats.stats.passed/stats.stats.total)*100) : 0}% نسبة النجاح`} color={C.success} />
-              <StatCard icon="❌" label="الراسبون" value={stats.stats.failed} color={C.danger} />
-              <StatCard icon="📊" label="متوسط الدرجات" value={`${stats.stats.avgScore}%`} color={C.rgaGold} />
-              <StatCard icon="🏆" label="أعلى درجة" value={`${stats.stats.maxScore}%`} color="#7C3AED" />
+              <StatCard icon="" label="إجمالي المختبرين" value={stats.stats.total} color={C.accentMid} />
+              <StatCard icon="" label="الناجحون" value={stats.stats.passed} sub={`${stats.stats.total > 0 ? Math.round((stats.stats.passed/stats.stats.total)*100) : 0}% نسبة النجاح`} color={C.success} />
+              <StatCard icon="" label="الراسبون" value={stats.stats.failed} color={C.danger} />
+              <StatCard icon="" label="متوسط الدرجات" value={`${stats.stats.avgScore}%`} color={C.rgaGold} />
+              <StatCard icon="" label="أعلى درجة" value={`${stats.stats.maxScore}%`} color="#7C3AED" />
             </div>
 
             {/* Specialty breakdown */}
@@ -188,7 +189,7 @@ export function AdminDashboard() {
               <input
                 value={search}
                 onChange={e => { setSearch(e.target.value); setPage(1); }}
-                placeholder="🔍 بحث بالاسم أو الشركة أو رقم الهوية..."
+                placeholder=" بحث بالاسم أو الشركة أو رقم الهوية..."
                 style={{ flex: 1, minWidth: 220, padding: '9px 14px', borderRadius: 8, border: `1.5px solid ${C.border}`, fontSize: 13, fontFamily: font, outline: 'none', color: C.text }}
               />
               <select
@@ -198,12 +199,7 @@ export function AdminDashboard() {
                 <option value="">جميع التخصصات</option>
                 {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
-              <button onClick={() => exportToExcel(results)} style={{ padding: '9px 16px', borderRadius: 8, border: `1px solid ${C.success}`, background: C.successBg, color: C.success, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: font }}>
-                📥 Excel
-              </button>
-              <button onClick={() => exportToCSV(results)} style={{ padding: '9px 16px', borderRadius: 8, border: `1px solid ${C.accentMid}`, background: C.accentGhost, color: C.accentMid, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: font }}>
-                📄 CSV
-              </button>
+              <ExportReportButton />
             </div>
 
             {/* Table */}
