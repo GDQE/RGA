@@ -408,7 +408,7 @@ function buildDashboardSheet(data) {
     maxR = Math.max(maxR, r);
   });
 
-  // ─── عرض الأعمدة ─────────────────────────────────────────
+ 
   const colWidths = [
     {wch:24},{wch:10},{wch:14},{wch:10},
     {wch:3},
@@ -425,7 +425,7 @@ function buildDashboardSheet(data) {
   return ws;
 }
 
-// ─── توليد الملف ─────────────────────────────────────────────
+
 async function generateExcel(data) {
   const wb = XLSX.utils.book_new();
 
@@ -558,7 +558,7 @@ export default function ExportReportButton({
             <span style={styles.icon}></span>
           )}
           {status === "loading" ? "جارٍ التصدير..." :
-           status === "success" ? “ تم التصدير" :
+           status === "success" ?  "تم التصدير" :
            status === "error"   ? "أعد المحاولة" :
            "تصدير التقرير"}
         </button>
@@ -569,8 +569,7 @@ export default function ExportReportButton({
   );
 }
 
-// ─── PREVIEW WRAPPER (للاختبار في Artifact) ──────────────────
-// احذف هذا الجزء عند الاستخدام في مشروعك الفعلي
+
 export function PreviewWrapper() {
   return (
     <div style={{
@@ -622,7 +621,7 @@ export function PreviewWrapper() {
           maxWidth: "400px",
         }}>
           <strong style={{ color: "#1F4E79", display: "block", marginBottom: "6px" }}>
-            📋 محتويات التقرير:
+             محتويات التقرير:
           </strong>
           <span> <strong>ورقة النتائج</strong> — جميع بيانات المرشحين مع فلترة<br/></span>
           <span> <strong>Dashboard</strong> — مؤشرات KPI + رسوم بيانية<br/></span>
