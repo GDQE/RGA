@@ -604,10 +604,8 @@ export function PreviewWrapper() {
         alignItems: "center",
         gap: "20px",
       }}>
-        <ExportReportButton
-          supabaseUrl={typeof window !== "undefined" ? window.__SUPABASE_URL__ : ""}
-          supabaseKey={typeof window !== "undefined" ? window.__SUPABASE_KEY__ : ""}
-        />
+        <ExportReportButton />
+
 
         <div style={{
           marginTop: "8px",
