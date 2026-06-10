@@ -3,9 +3,8 @@ import * as XLSX from "xlsx";
 
 // ─── إعداد Supabase ────────────────────────────────────────
 // يمكن تمرير القيم كـ props أو من متغيرات البيئة
-const DEFAULT_URL = import.meta?.env?.VITE_SUPABASE_URL  || "";
-const DEFAULT_KEY = import.meta?.env?.VITE_SUPABASE_ANON_KEY || "";
-
+const DEFAULT_URL = import.meta.env.VITE_SUPABASE_URL || "";
+const DEFAULT_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 // ─── ثوابت ─────────────────────────────────────────────────
 const PASS_THRESHOLD = 60; // نسبة النجاح
 
