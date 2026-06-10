@@ -280,9 +280,9 @@ function buildDashboardSheet(data) {
 
   const kpis = [
     { label: "إجمالي المختبرين",     val: total,               bg: "FF0070C0" },
-    { label: "الناجحون",             val: passedList.length,   bg: "FF375623" },
-    { label: "الراسبون",             val: failedList.length,   bg: "FF9C0006" },
-    { label: "معدل النجاح %",        val: passRate,            bg: "FF7030A0" },
+    { label: "المؤهلين",             val: passedList.length,   bg: "FF375623" },
+    { label: "غير المؤهلين",             val: failedList.length,   bg: "FF9C0006" },
+    { label: "معدل التأهيل %",        val: passRate,            bg: "FF7030A0" },
     { label: "متوسط الدرجات",        val: avgScore,            bg: "FF1F4E79" },
     { label: "أعلى درجة",            val: maxScore,            bg: "FF833C00" },
     { label: "آخر أسبوع",            val: recentWeek,          bg: "FF004B50" },
