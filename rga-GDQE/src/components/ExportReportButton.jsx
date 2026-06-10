@@ -18,8 +18,7 @@ async function fetchAllResults(supabaseUrl, supabaseKey) {
 
   // جلب النتائج الكاملة من الـ view
   const res = await fetch(
-    `${supabaseUrl}/rest/v1/v_results_full?select=*`
-
+    `${supabaseUrl}/rest/v1/v_results_full?select=*`,
     { headers }
   );
   if (!res.ok) throw new Error(`Supabase error: ${res.status} ${res.statusText}`);
