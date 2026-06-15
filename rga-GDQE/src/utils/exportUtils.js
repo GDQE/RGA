@@ -13,7 +13,7 @@ export function exportToExcel(data, filename = 'نتائج_التأهيل') {
     'النسبة المئوية': `${r.score}%`,
     'الإجابات الصحيحة': r.correct_answers,
     'الإجابات الخاطئة': r.wrong_answers,
-    'النتيجة': r.passed ? 'ناجح ✓' : 'راسب ✗',
+    'النتيجة': r.passed ? 'مؤهل' :'غير مؤهل',
     'تاريخ الاختبار': r.submitted_at
       ? new Date(r.submitted_at).toLocaleDateString('ar-SA')
       : '',
