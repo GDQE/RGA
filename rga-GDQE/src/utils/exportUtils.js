@@ -50,7 +50,7 @@ export function exportToCSV(data, filename = 'نتائج_التأهيل') {
     `${r.score}%`,
     r.correct_answers,
     r.wrong_answers,
-    r.passed ? 'ناجح' : 'راسب',
+    r.passed ? 'مؤهل' : 'غير مؤهل',
     r.submitted_at ? new Date(r.submitted_at).toLocaleDateString('ar-SA') : '',
   ]);
 
