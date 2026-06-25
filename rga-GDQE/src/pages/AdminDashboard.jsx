@@ -11,6 +11,8 @@ import { signOut } from '../services/authService';
 import { C, font, SPECIALTIES, SPECIALTY_ICONS } from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { AdminFirmsPage } from './AdminFirmsPage';
+import { AdminCommitteePage } from './AdminCommitteePage';
 
 const PIE_COLORS = ['#1B5E35', '#C0392B'];
 
@@ -83,11 +85,13 @@ return (
        </div>
 
        {/* Nav */}
-       <nav style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+       <nav style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 4, overflowY: 'auto' }}>
          {[
            { id: 'overview', label: 'لوحة مؤشرات الأداء' },
            { id: 'results', label: 'النتائج' },
            { id: 'charts', label: 'التقارير' },
+           { id: 'firms', label: 'المكاتب الاستشارية' },
+           { id: 'committee', label: 'لجنة التقييم' },
          ].map(item => (
            <button key={item.id} onClick={() => setTab(item.id)} style={{
              display: 'flex', alignItems: 'center', gap: 12, padding: '11px 14px',
@@ -121,7 +125,7 @@ return (
        <div style={{ marginBottom: 28, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
          <div>
            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: C.text, fontFamily: font }}>
-             {tab === 'overview' ? 'لوحة مؤشرات الأداء' : tab === 'results' ? 'النتائج' : 'التقارير'}
+             {tab === 'overview' ? 'لوحة مؤشرات الأداء' : tab === 'results' ? 'النتائج' : tab === 'charts' ? 'التقارير' : tab === 'firms' ? 'المكاتب الاستشارية' : 'لجنة التقييم'}
            </h1>
            <p style={{ margin: '4px 0 0', color: C.textMuted, fontSize: 13, fontFamily: font }}>
              نظام اختبار التأهيل — الإدارة العامة للجودة والبيئة
@@ -311,6 +315,12 @@ return (
            </div>
          </div>
        )}
+
+       {/* FIRMS TAB */}
+       {tab === 'firms' && <AdminFirmsPage />}
+
+       {/* COMMITTEE TAB */}
+       {tab === 'committee' && <AdminCommitteePage />}
      </div>
 
      {/* Delete confirm modal */}
