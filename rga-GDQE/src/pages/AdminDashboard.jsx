@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { AdminFirmsPage } from './AdminFirmsPage';
 import { AdminCommitteePage } from './AdminCommitteePage';
+import { AdminDocumentReviewPage } from './AdminDocumentReviewPage';
 
 const PIE_COLORS = ['#1B5E35', '#C0392B'];
 
@@ -90,6 +91,7 @@ return (
            { id: 'overview', label: 'لوحة مؤشرات الأداء' },
            { id: 'results', label: 'النتائج' },
            { id: 'charts', label: 'التقارير' },
+           { id: 'review', label: 'مراجعة الطلبات' },
            { id: 'firms', label: 'المكاتب الاستشارية' },
            { id: 'committee', label: 'لجنة التقييم' },
          ].map(item => (
@@ -125,7 +127,7 @@ return (
        <div style={{ marginBottom: 28, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
          <div>
            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: C.text, fontFamily: font }}>
-             {tab === 'overview' ? 'لوحة مؤشرات الأداء' : tab === 'results' ? 'النتائج' : tab === 'charts' ? 'التقارير' : tab === 'firms' ? 'المكاتب الاستشارية' : 'لجنة التقييم'}
+             {tab === 'overview' ? 'لوحة مؤشرات الأداء' : tab === 'results' ? 'النتائج' : tab === 'charts' ? 'التقارير' : tab === 'review' ? 'مراجعة الطلبات' : tab === 'firms' ? 'المكاتب الاستشارية' : 'لجنة التقييم'}
            </h1>
            <p style={{ margin: '4px 0 0', color: C.textMuted, fontSize: 13, fontFamily: font }}>
              نظام اختبار التأهيل — الإدارة العامة للجودة والبيئة
@@ -315,6 +317,9 @@ return (
            </div>
          </div>
        )}
+
+       {/* DOCUMENT REVIEW TAB */}
+       {tab === 'review' && <AdminDocumentReviewPage />}
 
        {/* FIRMS TAB */}
        {tab === 'firms' && <AdminFirmsPage />}
