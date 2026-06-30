@@ -1,10 +1,10 @@
 import { supabase } from './supabase';
 
 export const REQUIRED_DOC_TYPES = [
-  { key: 'cv', label: 'السيرة الذاتية', icon: '📄' },
-  { key: 'academic_certificate', label: 'الشهادة الأكاديمية', icon: '🎓' },
-  { key: 'training_course', label: 'الدورات التدريبية', icon: '📜' },
-  { key: 'experience_letter', label: 'خطاب الخبرة', icon: '💼' },
+  { key: 'cv', label: 'السيرة الذاتية', icon: ' ' },
+  { key: 'academic_certificate', label: 'الشهادة الأكاديمية', icon: ' ' },
+  { key: 'training_course', label: 'الدورات التدريبية', icon: ' ' },
+  { key: 'experience_letter', label: 'خطاب الخبرة', icon: ' ' },
 ];
 
 /**
@@ -76,6 +76,14 @@ export async function createCandidateWithDocuments({ candidateInfo, firmId, file
       uploadedDocs.push(docType);
     }
 
+    // فحص آلي فوري لاكتمال المستندات بعد الرفع (لا ينتظر تحديث صفحة)
+    try {
+      const { runDocumentCheck } = await import('./documentCheckService');
+      await runDocumentCheck(candidate.id);
+    } catch (checkErr) {
+      console.error('Auto document check failed (non-blocking):', checkErr);
+    }
+
     return { success: true, candidateId: candidate.id, uploadedDocs };
   } catch (error) {
     console.error('Create candidate error:', error);
@@ -126,7 +134,8 @@ export async function fetchCandidateDocuments(candidateId) {
 export const STATUS_LABELS = {
   pending: { label: 'قيد المراجعة', color: 'warning' },
   documents_incomplete: { label: 'مستندات ناقصة', color: 'danger' },
-  documents_complete: { label: 'مستندات مكتملة', color: 'success' },
+  documents_complete: { label: 'مستندات مكتملة — بانتظار اعتماد المشرف', color: 'success' },
+  documents_approved: { label: 'معتمد — بانتظار جدولة الاختبار', color: 'success' },
   needs_review: { label: 'يحتاج مراجعة', color: 'warning' },
   exam_scheduled: { label: 'مجدول للاختبار', color: 'default' },
   exam_passed: { label: 'نجح في الاختبار', color: 'success' },
