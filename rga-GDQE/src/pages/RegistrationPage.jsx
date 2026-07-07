@@ -1,104 +1,146 @@
 import { useState } from 'react';
 import { TopBar } from '../components/TopBar';
-import { TextInput, PhoneInput, ErrorBox } from '../components/UI';
+import { ErrorBox, LoadingSpinner } from '../components/UI';
 import { C, font, SPECIALTIES, SPECIALTY_ICONS } from '../utils/constants';
+import { supabase } from '../services/supabase';
 
 export function RegistrationPage({ onSubmit }) {
-  const [form, setForm] = useState({ name: '', company: '', idNumber: '', phone: '', certificates: '', specialty: '' });
+  const [idNumber, setIdNumber] = useState('');
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [dropOpen, setDropOpen] = useState(false);
+  const [candidate, setCandidate] = useState(null); // بيانات المرشح من قاعدة البيانات
+  const [confirmed, setConfirmed] = useState(false);
 
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-
-  const handleSubmit = () => {
-    if (!form.name.trim()) return setError('الاسم الكامل مطلوب');
-    if (!form.company.trim()) return setError('اسم الشركة / المنشأة مطلوب');
-    if (!form.idNumber.trim()) return setError('رقم الهوية / الإقامة مطلوب');
-    if (!/^\d{10}$/.test(form.idNumber.trim())) return setError('رقم الهوية يجب أن يكون 10 أرقام');
-    if (!form.phone || form.phone.length < 13) return setError('رقم الجوال مطلوب (9 أرقام بعد +966)');
-    if (!form.specialty) return setError('يرجى اختيار التخصص');
+  const handleLookup = async () => {
+    if (!idNumber.trim() || idNumber.length < 9) {
+      return setError('يرجى إدخال رقم الهوية كاملاً');
+    }
     setError('');
-    onSubmit(form);
+    setLoading(true);
+
+    // البحث عن المرشح بالهوية في النظام الجديد
+    const { data, error: err } = await supabase
+      .from('candidates')
+      .select('id, full_name, specialty, company, national_id, id_number, application_status')
+      .or(`national_id.eq.${idNumber.trim()},id_number.eq.${idNumber.trim()}`)
+      .eq('application_status', 'exam_scheduled')
+      .maybeSingle();
+
+    setLoading(false);
+
+    if (err) {
+      setError('خطأ في الاتصال — يرجى المحاولة مجدداً');
+      return;
+    }
+
+    if (!data) {
+      setError('رقم الهوية غير مسجّل أو لم يُجدَّل لاختبار بعد — تواصل مع مكتبك الاستشاري');
+      return;
+    }
+
+    setCandidate(data);
+  };
+
+  const handleConfirm = () => {
+    if (!candidate) return;
+    setConfirmed(true);
+    // نرسل بيانات المرشح الكاملة لـ App.jsx لبدء الاختبار
+    onSubmit({
+      candidateId: candidate.id,
+      name: candidate.full_name,
+      specialty: candidate.specialty,
+      company: candidate.company,
+      idNumber: idNumber.trim(),
+    });
   };
 
   return (
     <div style={{ minHeight: '100vh', background: C.bg, display: 'flex', flexDirection: 'column', direction: 'rtl' }}>
       <TopBar showBranding />
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 16px' }}>
-        <div style={{ width: '100%', maxWidth: 520 }}>
-          <div style={{ textAlign: 'center', marginBottom: 28 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: C.accentGhost, border: `1px solid ${C.accentLight}44`, borderRadius: 20, padding: '5px 16px', marginBottom: 14 }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: C.accentMid, fontFamily: font }}>اختبار مبدئي للتأهيل للمقابلة النهائية</span>
-            </div>
-            <p style={{ margin: 0, color: C.textSub, fontSize: 14, fontFamily: font }}>يرجى تعبئة جميع البيانات بدقة قبل البدء في الاختبار</p>
+        <div style={{ width: '100%', maxWidth: 440 }}>
+          <div style={{ textAlign: 'center', marginBottom: 24 }}>
+            <div style={{ fontSize: 44, marginBottom: 10 }}>🪪</div>
+            <h1 style={{ margin: '0 0 6px', fontSize: 22, fontWeight: 900, color: C.text, fontFamily: font }}>الدخول للاختبار</h1>
+            <p style={{ margin: 0, color: C.textSub, fontSize: 14, fontFamily: font }}>أدخل رقم هويتك للتحقق من تسجيلك</p>
           </div>
 
           <div style={{ background: C.surface, borderRadius: 20, padding: '32px 36px', boxShadow: C.shadowLg, border: `1px solid ${C.border}` }}>
-            <TextInput label="الاسم الكامل" value={form.name} onChange={v => set('name', v)} placeholder="أدخل اسمك الرباعي كاملاً" required />
-            <TextInput label="الشركة / المنشأة" value={form.company} onChange={v => set('company', v)} placeholder="اسم جهة العمل" required />
-            <TextInput label="رقم الهوية / الإقامة" value={form.idNumber} onChange={v => set('idNumber', v.replace(/\D/g, '').slice(0, 10))} placeholder="أدخل 10 أرقام" required />
-            <PhoneInput value={form.phone} onChange={v => set('phone', v)} />
-            <TextInput label="الشهادات الإضافية" value={form.certificates} onChange={v => set('certificates', v)} placeholder="مثال: NEBOSH، PMP، ISO 9001 Lead Auditor" hint=" اذكر شهاداتك المهنية إن وجدت" />
 
-            {/* Specialty Dropdown */}
-            <div style={{ marginBottom: 24 }}>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: C.text, marginBottom: 6, fontFamily: font }}>
-                التخصص <span style={{ color: C.danger }}>*</span>
-              </label>
-              <div style={{ position: 'relative' }}>
-                <div onClick={() => setDropOpen(o => !o)} style={{
-                  padding: '11px 14px', borderRadius: 10, cursor: 'pointer', userSelect: 'none',
-                  border: `1.5px solid ${dropOpen || form.specialty ? C.accentMid : C.border}`,
-                  background: C.surface, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  boxShadow: dropOpen ? `0 0 0 3px ${C.accentLight}22` : 'none', transition: 'all 0.2s'
+            {!candidate ? (
+              <>
+                <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 8, fontFamily: font }}>
+                  رقم الهوية / الإقامة
+                </label>
+                <input
+                  value={idNumber}
+                  onChange={e => setIdNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  onKeyDown={e => e.key === 'Enter' && handleLookup()}
+                  placeholder="أدخل رقم الهوية"
+                  maxLength={10}
+                  style={{
+                    width: '100%', padding: '13px 14px', borderRadius: 12, fontSize: 18,
+                    fontFamily: 'monospace', letterSpacing: 3, textAlign: 'center',
+                    border: `1.5px solid ${error ? C.danger : C.border}`,
+                    outline: 'none', boxSizing: 'border-box', color: C.text,
+                    background: '#F8FAFC', marginBottom: 16,
+                  }}
+                  autoFocus
+                />
+                <ErrorBox message={error} />
+                <button onClick={handleLookup} disabled={loading} style={{
+                  width: '100%', padding: '13px', borderRadius: 12, fontSize: 15, fontWeight: 800,
+                  cursor: loading ? 'not-allowed' : 'pointer', fontFamily: font,
+                  background: loading ? C.border : `linear-gradient(135deg, ${C.accent}, ${C.accentMid})`,
+                  color: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10
                 }}>
-                  {form.specialty
-                    ? <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <span style={{ fontSize: 18 }}>{SPECIALTY_ICONS[form.specialty]}</span>
-                        <span style={{ fontSize: 14, fontWeight: 700, color: C.text, fontFamily: font }}>{form.specialty}</span>
-                      </div>
-                    : <span style={{ fontSize: 14, color: C.textMuted, fontFamily: font }}>اختر تخصصك المهني</span>
-                  }
-                  <span style={{ color: C.textMuted, fontSize: 11, transform: dropOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', display: 'inline-block' }}>▼</span>
-                </div>
-                {dropOpen && (
-                  <div style={{ position: 'absolute', top: 'calc(100% + 6px)', right: 0, left: 0, zIndex: 200, background: C.surface, borderRadius: 12, border: `1.5px solid ${C.border}`, boxShadow: C.shadowLg, overflow: 'hidden' }}>
-                    {SPECIALTIES.map((sp, i) => (
-                      <div key={sp} onClick={() => { set('specialty', sp); setDropOpen(false); }}
-                        style={{
-                          padding: '12px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12,
-                          background: form.specialty === sp ? C.accentGhost : 'transparent',
-                          borderBottom: i < SPECIALTIES.length - 1 ? `1px solid ${C.border}` : 'none'
-                        }}
-                        onMouseEnter={e => { if (form.specialty !== sp) e.currentTarget.style.background = '#F8FAFC'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = form.specialty === sp ? C.accentGhost : 'transparent'; }}>
-                        <span style={{ fontSize: 20 }}>{SPECIALTY_ICONS[sp]}</span>
-                        <div>
-                          <div style={{ fontSize: 14, fontWeight: 700, color: C.text, fontFamily: font }}>{sp}</div>
-                        </div>
-                        {form.specialty === sp && <span style={{ marginRight: 'auto', color: C.accentMid, fontWeight: 900, fontSize: 16 }}>✓</span>}
-                      </div>
-                    ))}
+                  {loading ? <><LoadingSpinner size={18} color="#fff" /> جارٍ التحقق...</> : 'تحقق من التسجيل ←'}
+                </button>
+              </>
+            ) : (
+              <>
+                <div style={{ background: C.successBg, border: `1px solid ${C.success}`, borderRadius: 12, padding: '16px 18px', marginBottom: 20 }}>
+                  <div style={{ fontSize: 13, color: C.success, fontWeight: 700, marginBottom: 10, fontFamily: font }}>✓ تم التحقق — بياناتك:</div>
+                  <div style={{ display: 'grid', gap: 8 }}>
+                    <InfoRow label="الاسم" value={candidate.full_name} />
+                    <InfoRow label="التخصص" value={`${SPECIALTY_ICONS[candidate.specialty] || ''} ${candidate.specialty}`} />
+                    <InfoRow label="الشركة" value={candidate.company} />
                   </div>
-                )}
-              </div>
-            </div>
+                </div>
 
-            <ErrorBox message={error} />
+                <p style={{ fontSize: 13, color: C.textSub, textAlign: 'center', marginBottom: 20, fontFamily: font }}>
+                  هل هذه بياناتك الصحيحة؟
+                </p>
 
-            <button onClick={handleSubmit} style={{
-              width: '100%', padding: '14px', borderRadius: 12, fontSize: 15, fontWeight: 800, cursor: 'pointer',
-              fontFamily: font, background: `linear-gradient(135deg, ${C.accent}, ${C.accentMid})`,
-              color: '#fff', border: 'none', boxShadow: `0 4px 16px ${C.accent}44`, transition: 'all 0.2s'
-            }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = ''; }}>
-              الانتقال للاختبار ←
-            </button>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button onClick={() => { setCandidate(null); setIdNumber(''); }} style={{
+                    flex: 1, padding: '11px', borderRadius: 10, border: `1px solid ${C.border}`,
+                    background: 'transparent', color: C.textSub, cursor: 'pointer', fontFamily: font, fontSize: 14
+                  }}>
+                    لا، تراجع
+                  </button>
+                  <button onClick={handleConfirm} style={{
+                    flex: 2, padding: '11px', borderRadius: 10, border: 'none',
+                    background: `linear-gradient(135deg, ${C.accent}, ${C.accentMid})`,
+                    color: '#fff', fontWeight: 800, cursor: 'pointer', fontFamily: font, fontSize: 14
+                  }}>
+                    نعم، ابدأ الاختبار ←
+                  </button>
+                </div>
+              </>
+            )}
           </div>
-          <p style={{ textAlign: 'center', color: C.textMuted, fontSize: 12, marginTop: 14, fontFamily: font }}>🔒 بياناتك محمية ولن تُستخدم إلا لأغراض التأهيل المهني</p>
         </div>
       </div>
+    </div>
+  );
+}
+
+function InfoRow({ label, value }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontFamily: "'IBM Plex Sans Arabic','Tajawal',sans-serif" }}>
+      <span style={{ color: '#6B7280' }}>{label}</span>
+      <span style={{ fontWeight: 700, color: '#1F2937' }}>{value}</span>
     </div>
   );
 }
