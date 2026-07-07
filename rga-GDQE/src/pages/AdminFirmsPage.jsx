@@ -31,7 +31,7 @@ export function AdminFirmsPage() {
     <div>
       <div style={{ marginBottom: 20 }}>
         <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: C.text, fontFamily: font }}>المكاتب الاستشارية</h2>
-        <p style={{ margin: '4px 0 0', color: C.textMuted, fontSize: 13, fontFamily: font }}>راجع طلبات التسجيل ووافق على الحسابات</p>
+        <p style={{ margin: '4px 0 0', color: C.textMuted, fontSize: 13, fontFamily: font }}>مراجعة طلبات التسجيل </p>
       </div>
 
       <div style={{ background: C.surface, borderRadius: 14, boxShadow: C.shadow, border: `1px solid ${C.border}`, overflow: 'hidden' }}>
