@@ -1,10 +1,7 @@
 import { supabase } from './supabase';
 import { logAudit } from './committeeAuthService';
 
-/**
-* جلب القالب الافتراضي (المعايير والبنود الفرعية) - أول قالب نشط
-*/
-export async function fetchActiveTemplate(specialty = 'عام') {
+export async function fetchActiveTemplate() {
   try {
     const { data: template, error: tErr } = await supabase
       .from('evaluation_templates')
@@ -27,57 +24,44 @@ export async function fetchActiveTemplate(specialty = 'عام') {
 
     const criteriaWithItems = await Promise.all(
       mainCriteria.map(async (mc) => {
-        const { data: items, error: itemsErr } = await supabase
+        const { data: items } = await supabase
           .from('evaluation_sub_items')
           .select('*')
           .eq('main_criterion_id', mc.id)
           .order('display_order', { ascending: true });
-        if (itemsErr) throw itemsErr;
-        return { ...mc, items };
+        return { ...mc, items: items || [] };
       })
     );
 
     return { success: true, template, criteria: criteriaWithItems };
   } catch (error) {
-    console.error('Fetch template error:', error);
     return { success: false, error: error.message };
   }
 }
 
-/**
-* جلب أو إنشاء جلسة تقييم لمرشح معيّن (مرة واحدة لكل مرشح)
-*/
 export async function getOrCreateEvaluationSession(candidateId, templateId, examScore) {
   try {
-    const { data: existing, error: findErr } = await supabase
+    const { data: existing } = await supabase
       .from('candidate_evaluation_sessions')
       .select('*')
       .eq('candidate_id', candidateId)
       .maybeSingle();
 
-    if (findErr) throw findErr;
     if (existing) return { success: true, session: existing };
 
-    const { data: created, error: createErr } = await supabase
+    const { data: created, error } = await supabase
       .from('candidate_evaluation_sessions')
-      .insert({
-        candidate_id: candidateId,
-        template_id: templateId,
-        exam_score: examScore,
-      })
+      .insert({ candidate_id: candidateId, template_id: templateId, exam_score: examScore })
       .select()
       .single();
 
-    if (createErr) throw createErr;
+    if (error) throw error;
     return { success: true, session: created };
   } catch (error) {
     return { success: false, error: error.message };
   }
 }
 
-/**
-* جلب بيانات المرشح كاملة (اسم، هوية، وظيفة، درجة الاختبار)
-*/
 export async function fetchCandidateForEvaluation(candidateId) {
   try {
     const { data, error } = await supabase
@@ -96,37 +80,30 @@ export async function fetchCandidateForEvaluation(candidateId) {
   }
 }
 
-/**
-* جلب أو إنشاء تقييم العضو الحالي لجلسة معيّنة (مستقل تماماً عن الأعضاء الآخرين)
-*/
 export async function getOrCreateMemberEvaluation(sessionId, memberId) {
   try {
-    const { data: existing, error: findErr } = await supabase
+    const { data: existing } = await supabase
       .from('member_evaluations')
       .select('*, member_evaluation_scores (*)')
       .eq('session_id', sessionId)
       .eq('member_id', memberId)
       .maybeSingle();
 
-    if (findErr) throw findErr;
     if (existing) return { success: true, evaluation: existing };
 
-    const { data: created, error: createErr } = await supabase
+    const { data: created, error } = await supabase
       .from('member_evaluations')
       .insert({ session_id: sessionId, member_id: memberId })
       .select('*, member_evaluation_scores (*)')
       .single();
 
-    if (createErr) throw createErr;
+    if (error) throw error;
     return { success: true, evaluation: created };
   } catch (error) {
     return { success: false, error: error.message };
   }
 }
 
-/**
-* حفظ درجة بند فرعي واحد (حفظ تلقائي فوري عند كل تغيير)
-*/
 export async function saveSubItemScore(memberEvaluationId, subItemId, score, maxScore) {
   try {
     if (score < 0 || score > maxScore) {
@@ -148,9 +125,6 @@ export async function saveSubItemScore(memberEvaluationId, subItemId, score, max
   }
 }
 
-/**
-* حفظ ملاحظات وتوصية العضو (مسودة، قبل الاعتماد النهائي)
-*/
 export async function saveMemberNotesAndRecommendation(memberEvaluationId, { notes, recommendation }) {
   try {
     const { error } = await supabase
@@ -165,8 +139,8 @@ export async function saveMemberNotesAndRecommendation(memberEvaluationId, { not
 }
 
 /**
-* اعتماد تقييم العضو نهائياً (لا يمكن التعديل بعدها، ويُحسب متوسط اللجنة تلقائياً عند اكتمال الجميع)
-*/
+ * اعتماد تقييم العضو — وبعد اكتمال الجميع يُحسب الفاينل سكور ويُصدر الشهادة تلقائياً
+ */
 export async function submitMemberEvaluation(memberEvaluationId, memberName, candidateId) {
   try {
     const { error } = await supabase
@@ -182,6 +156,9 @@ export async function submitMemberEvaluation(memberEvaluationId, memberName, can
       details: { candidateId },
     });
 
+    // تحقق هل اكتمل كل الأعضاء — إذا نعم، أصدر الشهادة إن كانت النتيجة ≥75
+    await checkAndFinalizeSesssion(candidateId);
+
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
@@ -189,24 +166,66 @@ export async function submitMemberEvaluation(memberEvaluationId, memberName, can
 }
 
 /**
-* جلب حالة اكتمال تقييم اللجنة لمرشح (هل اعتمد الجميع؟ كم باقي؟)
-* يُستخدم في لوحة الإدارة وشاشة النتائج، وليس للعضو نفسه (لمنعه من رؤية تقدم الآخرين)
-*/
+ * يتحقق هل اكتمل كل أعضاء اللجنة — وإذا نعم يحسب النتيجة النهائية ويصدر الشهادة
+ */
+async function checkAndFinalizeSesssion(candidateId) {
+  try {
+    const { data: session } = await supabase
+      .from('candidate_evaluation_sessions')
+      .select('*, candidates (full_name, specialty)')
+      .eq('candidate_id', candidateId)
+      .maybeSingle();
+
+    if (!session) return;
+
+    // انتظر ثانية واحدة ليكمل الـ Trigger في Supabase حساب الفاينل سكور
+    await new Promise(r => setTimeout(r, 1500));
+
+    // أعد جلب الجلسة بعد الانتظار
+    const { data: updatedSession } = await supabase
+      .from('candidate_evaluation_sessions')
+      .select('*')
+      .eq('id', session.id)
+      .single();
+
+    if (!updatedSession) return;
+    if (updatedSession.status !== 'completed') return;
+
+    // إذا النتيجة النهائية ≥75 → أصدر الشهادة تلقائياً
+    if (updatedSession.final_score >= 75) {
+      const { issueCertificate } = await import('./certificateService');
+      await issueCertificate({
+        candidateId,
+        finalResultId: null,
+        engineerName: session.candidates?.full_name,
+        specialty: session.candidates?.specialty,
+        finalScore: updatedSession.final_score,
+      });
+    } else {
+      // النتيجة أقل من 75 → مرفوض
+      await supabase
+        .from('candidates')
+        .update({ application_status: 'rejected' })
+        .eq('id', candidateId);
+    }
+  } catch (e) {
+    console.error('Finalize session error (non-blocking):', e);
+  }
+}
+
 export async function fetchSessionProgress(sessionId) {
   try {
-    const { data: session, error: sErr } = await supabase
+    const { data: session } = await supabase
       .from('candidate_evaluation_sessions')
       .select('*')
       .eq('id', sessionId)
       .single();
-    if (sErr) throw sErr;
 
-    const { data: evaluations, error: eErr } = await supabase
+    const { data: evaluations } = await supabase
       .from('member_evaluations')
       .select('id, member_id, total_score, recommendation, is_submitted, submitted_at, committee_members (full_name, member_order)')
       .eq('session_id', sessionId)
       .order('committee_members(member_order)', { ascending: true });
-    if (eErr) throw eErr;
 
     return { success: true, session, evaluations };
   } catch (error) {
@@ -214,9 +233,6 @@ export async function fetchSessionProgress(sessionId) {
   }
 }
 
-/**
-* جلب قائمة المرشحين المحوّلين للجنة (حالة interview_scheduled أو exam_passed)
-*/
 export async function fetchCandidatesForCommittee() {
   try {
     const { data, error } = await supabase
@@ -225,7 +241,7 @@ export async function fetchCandidatesForCommittee() {
         id, full_name, specialty, company, application_status,
         results (score, passed)
       `)
-      .in('application_status', ['interview_scheduled', 'exam_passed'])
+      .in('application_status', ['exam_passed', 'interview_scheduled'])
       .order('created_at', { ascending: false });
 
     if (error) throw error;
