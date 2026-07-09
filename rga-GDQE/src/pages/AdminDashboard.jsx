@@ -15,6 +15,7 @@ import { AdminFirmsPage } from './AdminFirmsPage';
 import { AdminCommitteePage } from './AdminCommitteePage';
 import { AdminDocumentReviewPage } from './AdminDocumentReviewPage';
 import { AdminExamSchedulePage } from './AdminExamSchedulePage';
+import { AdminCertificatesPage } from './AdminCertificatesPage';
 
 const PIE_COLORS = ['#1B5E35', '#C0392B'];
 
@@ -65,6 +66,17 @@ const handleSignOut = async () => {
 
 const totalPages = Math.ceil(total / LIMIT);
 
+const TAB_LABELS = {
+  overview: 'لوحة مؤشرات الأداء',
+  results: 'النتائج',
+  charts: 'التقارير',
+  review: 'مراجعة الطلبات',
+  schedule: 'جدول الاختبارات',
+  firms: 'المكاتب الاستشارية',
+  committee: 'لجنة التقييم',
+  certificates: 'الشهادات الرقمية',
+};
+
 return (
    <div style={{ minHeight: '100vh', background: '#F4F6F5', direction: 'rtl', fontFamily: font }}>
 
@@ -75,7 +87,6 @@ return (
        display: 'flex', flexDirection: 'column', zIndex: 50,
        boxShadow: '2px 0 20px rgba(0,0,0,0.25)'
      }}>
-       {/* Logo */}
        <div style={{ padding: '24px 20px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
            <RGALogo size={36} />
@@ -86,27 +97,18 @@ return (
          </div>
        </div>
 
-       {/* Nav */}
        <nav style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 4, overflowY: 'auto' }}>
-         {[
-           { id: 'overview', label: 'لوحة مؤشرات الأداء' },
-           { id: 'results', label: 'النتائج' },
-           { id: 'charts', label: 'التقارير' },
-           { id: 'review', label: 'مراجعة الطلبات' },
-           { id: 'schedule', label: 'جدول الاختبارات' },
-           { id: 'firms', label: 'المكاتب الاستشارية' },
-           { id: 'committee', label: 'لجنة التقييم' },
-         ].map(item => (
-           <button key={item.id} onClick={() => setTab(item.id)} style={{
+         {Object.entries(TAB_LABELS).map(([id, label]) => (
+           <button key={id} onClick={() => setTab(id)} style={{
              display: 'flex', alignItems: 'center', gap: 12, padding: '11px 14px',
              borderRadius: 10, cursor: 'pointer', border: 'none', width: '100%', textAlign: 'right',
-             background: tab === item.id ? 'rgba(196,154,40,0.15)' : 'transparent',
-             color: tab === item.id ? '#C49A28' : 'rgba(255,255,255,0.6)',
-             fontSize: 13, fontWeight: tab === item.id ? 700 : 400, fontFamily: font,
+             background: tab === id ? 'rgba(196,154,40,0.15)' : 'transparent',
+             color: tab === id ? '#C49A28' : 'rgba(255,255,255,0.6)',
+             fontSize: 13, fontWeight: tab === id ? 700 : 400, fontFamily: font,
              transition: 'all 0.15s',
-             borderRight: tab === item.id ? '3px solid #C49A28' : '3px solid transparent'
+             borderRight: tab === id ? '3px solid #C49A28' : '3px solid transparent'
            }}>
-             {item.label}
+             {label}
            </button>
          ))}
        </nav>
@@ -125,11 +127,10 @@ return (
      {/* Main content */}
      <div style={{ marginRight: 240, padding: '28px 32px', minHeight: '100vh' }}>
 
-       {/* Header */}
        <div style={{ marginBottom: 28, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
          <div>
            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: C.text, fontFamily: font }}>
-             {tab === 'overview' ? 'لوحة مؤشرات الأداء' : tab === 'results' ? 'النتائج' : tab === 'charts' ? 'التقارير' : tab === 'review' ? 'مراجعة الطلبات' : tab === 'schedule' ? 'جدول الاختبارات' : tab === 'firms' ? 'المكاتب الاستشارية' : 'لجنة التقييم'}
+             {TAB_LABELS[tab]}
            </h1>
            <p style={{ margin: '4px 0 0', color: C.textMuted, fontSize: 13, fontFamily: font }}>
              نظام اختبار التأهيل — الإدارة العامة للجودة والبيئة
@@ -201,22 +202,16 @@ return (
        {tab === 'results' && (
          <div>
            <div style={{ background: C.surface, borderRadius: 14, padding: '16px 20px', boxShadow: C.shadow, border: `1px solid ${C.border}`, marginBottom: 20, display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-             <input
-               value={search}
-               onChange={e => { setSearch(e.target.value); setPage(1); }}
+             <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
                placeholder="بحث بالاسم أو الشركة أو رقم الهوية..."
-               style={{ flex: 1, minWidth: 220, padding: '9px 14px', borderRadius: 8, border: `1.5px solid ${C.border}`, fontSize: 13, fontFamily: font, outline: 'none', color: C.text }}
-             />
-             <select
-               value={specialty}
-               onChange={e => { setSpecialty(e.target.value); setPage(1); }}
+               style={{ flex: 1, minWidth: 220, padding: '9px 14px', borderRadius: 8, border: `1.5px solid ${C.border}`, fontSize: 13, fontFamily: font, outline: 'none', color: C.text }} />
+             <select value={specialty} onChange={e => { setSpecialty(e.target.value); setPage(1); }}
                style={{ padding: '9px 14px', borderRadius: 8, border: `1.5px solid ${C.border}`, fontSize: 13, fontFamily: font, color: C.text, background: C.surface, cursor: 'pointer' }}>
                <option value="">جميع التخصصات</option>
                {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
              </select>
              <ExportReportButton />
            </div>
-
            <div style={{ background: C.surface, borderRadius: 14, boxShadow: C.shadow, border: `1px solid ${C.border}`, overflow: 'hidden' }}>
              {loading ? (
                <div style={{ display: 'flex', justifyContent: 'center', padding: 48 }}><LoadingSpinner size={36} /></div>
@@ -258,7 +253,6 @@ return (
                      ))}
                    </tbody>
                  </table>
-
                  {totalPages > 1 && (
                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, padding: '16px', borderTop: `1px solid ${C.border}` }}>
                      <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} style={{ padding: '6px 14px', borderRadius: 7, border: `1px solid ${C.border}`, background: 'transparent', cursor: page === 1 ? 'not-allowed' : 'pointer', color: page === 1 ? C.textMuted : '#1B5E35', fontSize: 13, fontFamily: font }}>← السابق</button>
@@ -289,7 +283,6 @@ return (
                </PieChart>
              </ResponsiveContainer>
            </div>
-
            <div style={{ background: C.surface, borderRadius: 16, padding: 24, boxShadow: C.shadow, border: `1px solid ${C.border}` }}>
              <h3 style={{ margin: '0 0 20px', fontSize: 15, fontWeight: 800, color: C.text, fontFamily: font }}>متوسط الدرجات حسب التخصص</h3>
              <ResponsiveContainer width="100%" height={240}>
@@ -302,7 +295,6 @@ return (
                </BarChart>
              </ResponsiveContainer>
            </div>
-
            <div style={{ background: C.surface, borderRadius: 16, padding: 24, boxShadow: C.shadow, border: `1px solid ${C.border}`, gridColumn: '1 / -1' }}>
              <h3 style={{ margin: '0 0 20px', fontSize: 15, fontWeight: 800, color: C.text, fontFamily: font }}>التأهيل حسب التخصص</h3>
              <ResponsiveContainer width="100%" height={260}>
@@ -320,20 +312,13 @@ return (
          </div>
        )}
 
-       {/* DOCUMENT REVIEW TAB */}
        {tab === 'review' && <AdminDocumentReviewPage />}
-
-       {/* EXAM SCHEDULE TAB */}
        {tab === 'schedule' && <AdminExamSchedulePage />}
-
-       {/* FIRMS TAB */}
        {tab === 'firms' && <AdminFirmsPage />}
-
-       {/* COMMITTEE TAB */}
        {tab === 'committee' && <AdminCommitteePage />}
+       {tab === 'certificates' && <AdminCertificatesPage />}
      </div>
 
-     {/* Delete confirm modal */}
      {deleteConfirm && (
        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
          <div style={{ background: C.surface, borderRadius: 16, padding: '32px 36px', maxWidth: 360, width: '100%', boxShadow: C.shadowLg, direction: 'rtl', textAlign: 'center' }}>
