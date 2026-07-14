@@ -64,7 +64,7 @@ export function AdminDocumentReviewPage() {
       <div style={{ marginBottom: 20 }}>
         <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: C.text, fontFamily: font }}>مراجعة طلبات المرشحين</h2>
         <p style={{ margin: '4px 0 0', color: C.textMuted, fontSize: 13, fontFamily: font }}>
-          الفحص الآلي يتحقق من اكتمال الرفع — الاعتماد النهائي قرار بشري دائماً
+         
         </p>
       </div>
 
