@@ -61,9 +61,9 @@ export function AdminExamSchedulePage() {
   return (
     <div>
       <div style={{ marginBottom: 20 }}>
-        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: C.text, fontFamily: font }}>جدول الاختبارات</h2>
+        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: C.text, fontFamily: font }}>موعد الاختبار</h2>
         <p style={{ margin: '4px 0 0', color: C.textMuted, fontSize: 13, fontFamily: font }}>
-          كل مرشح معتمد يُجدَّل تلقائياً لأقرب أربعاء الساعة 10:00 صباحاً
+         
         </p>
       </div>
 
