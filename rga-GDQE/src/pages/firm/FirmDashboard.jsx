@@ -67,7 +67,7 @@ export function FirmDashboard() {
           <div style={{ display: 'flex', justifyContent: 'center', padding: 60 }}><LoadingSpinner size={36} /></div>
         ) : candidates.length === 0 ? (
           <div style={{ background: C.surface, borderRadius: 16, padding: 60, textAlign: 'center', border: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>📋</div>
+            <div style={{ fontSize: 48, marginBottom: 16 }}></div>
             <p style={{ color: C.textMuted, fontSize: 15 }}>لا يوجد مرشحون مسجلون بعد</p>
           </div>
         ) : (
