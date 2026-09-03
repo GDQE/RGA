@@ -38,7 +38,7 @@ export function AddCandidatePage() {
 
     const missingDocs = REQUIRED_DOC_TYPES.filter(d => !files[d.key]);
     if (missingDocs.length > 0) {
-      return setError(`يرجى رفع جميع المرفقات المطلوبة (ناقص: ${missingDocs.map(d => d.label).join('، ')})`);
+      return setError(`يرجى رفع جميع المرفقات المطلوبة ( ${missingDocs.map(d => d.label).join('، ')})`);
     }
 
     setError('');
