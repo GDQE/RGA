@@ -60,7 +60,7 @@ export function RegistrationPage({ onSubmit }) {
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 16px' }}>
         <div style={{ width: '100%', maxWidth: 440 }}>
           <div style={{ textAlign: 'center', marginBottom: 24 }}>
-            <div style={{ fontSize: 44, marginBottom: 10 }}>🪪</div>
+            <div style={{ fontSize: 44, marginBottom: 10 }}></div>
             <h1 style={{ margin: '0 0 6px', fontSize: 22, fontWeight: 900, color: C.text, fontFamily: font }}>الدخول للاختبار</h1>
             <p style={{ margin: 0, color: C.textSub, fontSize: 14, fontFamily: font }}>أدخل رقم هويتك للتحقق من تسجيلك</p>
           </div>
