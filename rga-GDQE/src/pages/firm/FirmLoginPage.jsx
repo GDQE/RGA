@@ -34,7 +34,7 @@ export function FirmLoginPage() {
           <div style={{ textAlign: 'center', marginBottom: 24 }}>
             <div style={{ fontSize: 44, marginBottom: 10 }}>🏢</div>
             <h1 style={{ margin: '0 0 6px', fontSize: 22, fontWeight: 900, color: C.text, fontFamily: font }}>بوابة المكاتب الاستشارية</h1>
-            <p style={{ margin: 0, color: C.textSub, fontSize: 14, fontFamily: font }}>سجّل دخولك لإدارة طلبات المرشحين</p>
+            <p style={{ margin: 0, color: C.textSub, fontSize: 14, fontFamily: font }}> </p>
           </div>
 
           <div style={{ background: C.surface, borderRadius: 20, padding: '32px 36px', boxShadow: C.shadowLg, border: `1px solid ${C.border}` }}>
@@ -53,7 +53,7 @@ export function FirmLoginPage() {
             </button>
 
             <p style={{ textAlign: 'center', marginTop: 18, fontSize: 13, color: C.textMuted, fontFamily: font }}>
-              ليس لديك حساب؟ <Link to="/firm/signup" style={{ color: C.accentMid, fontWeight: 700, textDecoration: 'none' }}>سجّل مكتبك الآن</Link>
+              ليس لديك حساب؟ <Link to="/firm/signup" style={{ color: C.accentMid, fontWeight: 700, textDecoration: 'none' }}>تسجيل دخول</Link>
             </p>
           </div>
         </div>
