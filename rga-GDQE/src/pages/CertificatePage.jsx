@@ -86,7 +86,7 @@ export function CertificatePage() {
               border: '1px solid #ef4444', borderRadius: 8, padding: '6px 14px',
               fontSize: 12, fontWeight: 700, color: '#dc2626', fontFamily: font
             }}>
-              ⚠️ منتهية الصلاحية
+               منتهية الصلاحية
             </div>
           )}
 
