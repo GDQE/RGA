@@ -48,7 +48,7 @@ export function AdminDocumentReviewPage() {
     if (!rejectReason.trim()) return toast.error('يرجى كتابة سبب الرفض');
     const r = await rejectCandidateApplication(rejectModal.id, 'admin', rejectReason);
     if (r.success) {
-      toast.success(`تم رفض طلب ${rejectModal.name}`);
+      toast.success(`تم رفض الطلب ${rejectModal.name}`);
       setRejectModal(null);
       setRejectReason('');
       load();
@@ -97,7 +97,7 @@ export function AdminDocumentReviewPage() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <Badge color={isComplete ? 'success' : 'danger'}>
-                      {isComplete ? 'مستندات مكتملة ✓' : 'مستندات ناقصة'}
+                      {isComplete ? 'مستندات مكتملة' : 'مستندات ناقصة'}
                     </Badge>
                     <span style={{ fontSize: 12, color: C.textMuted }}>{isExpanded ? '▲' : '▼'}</span>
                   </div>
@@ -142,13 +142,13 @@ export function AdminDocumentReviewPage() {
                           background: isComplete ? C.success : C.border, color: '#fff', fontSize: 13, fontWeight: 700, fontFamily: font
                         }}
                       >
-                        ✓ اعتماد المرشح
+                         اعتماد المرشح
                       </button>
                       <button onClick={() => handleFlag(c.id, c.full_name)} style={{ padding: '9px 18px', borderRadius: 9, border: `1px solid ${C.warning}`, background: '#FFF7ED', color: C.warning, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: font }}>
-                        ⚠ تحتاج مراجعة
+                        تحتاج مراجعة
                       </button>
                       <button onClick={() => setRejectModal({ id: c.id, name: c.full_name })} style={{ padding: '9px 18px', borderRadius: 9, border: `1px solid ${C.danger}`, background: C.dangerBg, color: C.danger, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: font }}>
-                        ✕ رفض الطلب
+                         رفض الطلب
                       </button>
                     </div>
                   </div>
