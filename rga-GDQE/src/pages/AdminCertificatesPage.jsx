@@ -37,7 +37,7 @@ export function AdminCertificatesPage() {
         </div>
       ) : certs.length === 0 ? (
         <div style={{ background: C.surface, borderRadius: 16, padding: 60, textAlign: 'center', border: `1px solid ${C.border}` }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>🏅</div>
+          <div style={{ fontSize: 48, marginBottom: 16 }}></div>
           <p style={{ color: C.textMuted, fontSize: 15, fontFamily: font }}>لم تُصدر أي شهادات بعد</p>
         </div>
       ) : (
