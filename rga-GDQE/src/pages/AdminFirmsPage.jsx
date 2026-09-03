@@ -20,7 +20,7 @@ export function AdminFirmsPage() {
   const handleToggle = async (firmId, newStatus) => {
     const r = await setFirmActiveStatus(firmId, newStatus);
     if (r.success) {
-      toast.success(newStatus ? 'تم تفعيل المكتب' : 'تم تعطيل المكتب');
+      toast.success(newStatus ? 'تم تفعيل المكتب' : 'تم إلغاء المكتب');
       load();
     } else {
       toast.error('فشل التحديث: ' + r.error);
