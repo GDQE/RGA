@@ -42,7 +42,7 @@ export function LoginPage({ onLogin }) {
             </div>
           </div>
           <div style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, padding: '6px 16px', display: 'inline-block' }}>
-            <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12, fontFamily: font }}>🔐 لوحة تحكم الإدارة</span>
+            <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12, fontFamily: font }}> لوحة تحكم الإدارة</span>
           </div>
         </div>
 
