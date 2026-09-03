@@ -32,7 +32,7 @@ export function AdminExamSchedulePage() {
   const handleMarkResult = async (candidateId, name, passed) => {
     const r = await notifyExamResult(candidateId, passed);
     if (r.success) {
-      toast.success(`تم تسجيل نتيجة ${name}: ${passed ? 'ناجح ✓' : 'راسب ✗'}`);
+      toast.success(`تم تسجيل نتيجة ${name}: ${passed ? 'ناجح ' : 'راسب '}`);
       load();
     } else {
       toast.error('فشل: ' + r.error);
@@ -138,7 +138,7 @@ export function AdminExamSchedulePage() {
                             </div>
                           ) : (
                             <span style={{ fontSize: 12, color: C.textMuted, fontFamily: font }}>
-                              {isPassed ? '✓ تم التسجيل' : isFailed ? '✗ تم التسجيل' : '—'}
+                              {isPassed ? ' تم التسجيل' : isFailed ? ' تم التسجيل' : '—'}
                             </span>
                           )}
                         </td>
