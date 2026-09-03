@@ -48,7 +48,7 @@ export function FirmSignupPage() {
         <TopBar showBranding />
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
           <div style={{ background: C.surface, borderRadius: 20, padding: '44px 40px', maxWidth: 460, textAlign: 'center', boxShadow: C.shadowLg, border: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 52, marginBottom: 16 }}>⏳</div>
+            <div style={{ fontSize: 52, marginBottom: 16 }}></div>
             <h2 style={{ margin: '0 0 12px', fontSize: 20, fontWeight: 900, color: C.text, fontFamily: font }}>تم إنشاء حسابك بنجاح</h2>
             <p style={{ color: C.textSub, fontSize: 14, lineHeight: 1.8, fontFamily: font, marginBottom: 24 }}>
               حسابك الآن قيد المراجعة من قبل الإدارة العامة للجودة والبيئة. سيتم تفعيله بعد الموافقة، وسنتواصل معك عند التفعيل.
