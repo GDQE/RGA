@@ -18,7 +18,7 @@ export function RegistrationPage({ onSubmit }) {
     setError('');
     setLoading(true);
 
-    // البحث عن المرشح بالهوية في النظام الجديد
+    // البحث عن المرشح بالهوية في النظام 
     const { data, error: err } = await supabase
       .from('candidates')
       .select('id, full_name, specialty, company, national_id, id_number, application_status')
@@ -34,7 +34,7 @@ export function RegistrationPage({ onSubmit }) {
     }
 
     if (!data) {
-      setError('رقم الهوية غير مسجّل أو لم يُجدَّل لاختبار بعد — تواصل مع مكتبك الاستشاري');
+      setError('رقم الهوية غير مسجّل  — تواصل مع مكتبك الاستشاري');
       return;
     }
 
