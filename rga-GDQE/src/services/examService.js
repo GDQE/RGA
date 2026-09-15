@@ -1,5 +1,48 @@
 import { supabase } from './supabase';
 
+/**
+ * بدء الاختبار: يجلب الأسئلة من الخادم عبر RPC (بدون إجابات صحيحة إطلاقاً)
+ * يُستخدم بدل استيراد QUESTION_BANK مباشرة في الواجهة
+ */
+export async function startExam({ candidateId, specialty }) {
+  const { data, error } = await supabase.rpc('start_exam', {
+    p_candidate_id: candidateId || null,
+    p_specialty: specialty,
+  });
+  if (error) return { success: false, error: error.message };
+  if (!data || data.length === 0) return { success: false, error: 'تعذّر تحميل أسئلة الاختبار' };
+
+  const sessionId = data[0].session_id;
+  const questions = data.map(row => ({
+    id: row.question_id,
+    text: row.question_text,
+    options: row.question_options,
+    points: 10,
+  }));
+  return { success: true, sessionId, questions };
+}
+
+/**
+ * تسليم الاختبار: يرسل فقط اختيارات المرشح، والخادم يحسب الدرجة ويقرر النجاح/الرسوب
+ * answers شكلها: [{ question_id, selected }, ...]
+ */
+export async function submitExamSession({ sessionId, answers }) {
+  const { data, error } = await supabase.rpc('submit_exam', {
+    p_session_id: sessionId,
+    p_answers: answers,
+  });
+  if (error) return { success: false, error: error.message };
+  const row = data?.[0];
+  if (!row) return { success: false, error: 'تعذّر إرسال النتيجة' };
+  return {
+    success: true,
+    score: row.score,
+    passed: row.passed,
+    correctCount: row.correct_count,
+    wrongCount: row.wrong_count,
+  };
+}
+
 export async function saveExamResult({ candidate, result }) {
   try {
     let candidateId = candidate.candidateId || null;
