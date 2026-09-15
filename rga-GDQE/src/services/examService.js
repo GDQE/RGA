@@ -1,172 +1,229 @@
 import { supabase } from './supabase';
 
-async function logAudit({ actorType, actorId, actorName, action, entityType, entityId, details }) {
-  try {
-    await supabase.from('audit_log').insert({
-      actor_type: actorType,
-      actor_id: actorId || null,
-      actor_name: actorName || null,
-      action,
-      entity_type: entityType,
-      entity_id: entityId || null,
-      details: details || null,
-    });
-  } catch (e) {
-    console.error('Audit log failed (non-blocking):', e);
-  }
+/**
+ * بدء الاختبار: يجلب الأسئلة من الخادم عبر RPC (بدون إجابات صحيحة إطلاقاً)
+ * يُستخدم بدل استيراد QUESTION_BANK مباشرة في الواجهة
+ */
+export async function startExam({ candidateId, specialty }) {
+  const { data, error } = await supabase.rpc('start_exam', {
+    p_candidate_id: candidateId || null,
+    p_specialty: specialty,
+  });
+  if (error) return { success: false, error: error.message };
+  if (!data || data.length === 0) return { success: false, error: 'تعذّر تحميل أسئلة الاختبار' };
+
+  const sessionId = data[0].session_id;
+  const questions = data.map(row => ({
+    id: row.question_id,
+    text: row.question_text,
+    options: row.question_options,
+    points: 10,
+  }));
+  return { success: true, sessionId, questions };
 }
 
 /**
- * تسجيل دخول عضو اللجنة
- * التحقق الآن يتم بالكامل على الخادم (login_committee_member_v2 RPC):
- * - كلمة المرور تُرسل عبر HTTPS ولا تُشفَّر في المتصفح
- * - المقارنة تتم بـ bcrypt داخل قاعدة البيانات
- * - لا يصل password_hash أبداً للمتصفح (RLS يمنع SELECT مباشر على الجدول أصلاً)
+ * تسليم الاختبار: يرسل فقط اختيارات المرشح، والخادم يحسب الدرجة ويقرر النجاح/الرسوب
+ * answers شكلها: [{ question_id, selected }, ...]
  */
-export async function loginCommitteeMember({ username, password }) {
+export async function submitExamSession({ sessionId, answers }) {
+  const { data, error } = await supabase.rpc('submit_exam', {
+    p_session_id: sessionId,
+    p_answers: answers,
+  });
+  if (error) return { success: false, error: error.message };
+  const row = data?.[0];
+  if (!row) return { success: false, error: 'تعذّر إرسال النتيجة' };
+  return {
+    success: true,
+    score: row.score,
+    passed: row.passed,
+    correctCount: row.correct_count,
+    wrongCount: row.wrong_count,
+  };
+}
+
+export async function saveExamResult({ candidate, result }) {
   try {
-    const { data, error } = await supabase.rpc('login_committee_member_v2', {
-      p_username: username,
-      p_password: password,
-    });
+    let candidateId = candidate.candidateId || null;
 
-    if (error) {
-      return { success: false, error: 'اسم المستخدم أو كلمة المرور غير صحيحة' };
+    // لو المرشح جاء من النظام الجديد (عنده candidateId) لا نُنشئ سجلاً جديداً
+    if (!candidateId) {
+      const { data: newCandidate, error: e0 } = await supabase
+        .from('candidates')
+        .insert({
+          full_name: candidate.name,
+          company: candidate.company,
+          id_number: candidate.idNumber,
+          phone: candidate.phone || null,
+          specialty: candidate.specialty,
+          certificates: candidate.certificates || null,
+        })
+        .select()
+        .single();
+      if (e0) throw e0;
+      candidateId = newCandidate.id;
     }
-    const row = data?.[0];
-    if (!row) {
-      return { success: false, error: 'اسم المستخدم أو كلمة المرور غير صحيحة' };
+
+    const correct = result.results.filter(r => r.isCorrect).length;
+    const wrong = result.results.filter(r => !r.isCorrect).length;
+
+    const { data: resultData, error: e1 } = await supabase
+      .from('results')
+      .insert({
+        candidate_id: candidateId,
+        score: result.score,
+        earned_points: result.earned,
+        total_points: result.total,
+        correct_answers: correct,
+        wrong_answers: wrong,
+        passed: result.score >= 70,
+      })
+      .select()
+      .single();
+
+    if (e1) throw e1;
+
+    const answers = result.results.map(r => ({
+      result_id: resultData.id,
+      question_id: r.id,
+      selected_answer: r.userAnswer,
+      correct_answer: r.correct,
+      is_correct: r.isCorrect,
+    }));
+
+    const { error: e2 } = await supabase.from('exam_answers').insert(answers);
+    if (e2) throw e2;
+
+    // ربط النتيجة بمرشح النظام الجديد وتحديث حالته
+    if (candidate.candidateId) {
+      const newStatus = result.score >= 70 ? 'exam_passed' : 'exam_failed';
+      await supabase
+        .from('candidates')
+        .update({ application_status: newStatus })
+        .eq('id', candidate.candidateId);
+
+      // إشعار داخلي بالنتيجة
+      await supabase.from('notifications').insert({
+        candidate_id: candidate.candidateId,
+        type: 'exam_result',
+        title: result.score >= 70 ? 'نتيجة الاختبار: ناجح ✓' : 'نتيجة الاختبار',
+        message: result.score >= 70
+          ? 'تم اجتياز الاختبار بنجاح وتم ترشيحك للمقابلة النهائية مع اللجنة.'
+          : 'نأسف، لم يتم اجتياز الاختبار.',
+        channel: 'app',
+        sent_status: 'sent',
+      }).catch(() => {}); // non-blocking
     }
 
-    const session = {
-      id: row.id,
-      fullName: row.full_name,
-      username: row.username,
-      memberOrder: row.member_order,
-      loginAt: new Date().toISOString(),
-    };
-    localStorage.setItem('committee_session', JSON.stringify(session));
-
-    await logAudit({
-      actorType: 'committee_member', actorId: row.id, actorName: row.full_name,
-      action: 'login', entityType: 'member', entityId: row.id,
-    });
-
-    return { success: true, member: session };
+    return { success: true, candidateId, resultId: resultData.id };
   } catch (error) {
-    console.error('Login committee member error:', error);
-    return { success: false, error: 'حدث خطأ أثناء تسجيل الدخول' };
+    console.error('Save failed:', error);
+    return { success: false, error: error.message };
   }
 }
 
-export function getCommitteeSession() {
+export async function fetchAllResults({ search = '', specialty = '', page = 1, limit = 20 } = {}) {
   try {
-    const raw = localStorage.getItem('committee_session');
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
+    let query = supabase
+      .from('results')
+      .select(`id, score, earned_points, total_points, correct_answers, wrong_answers, passed, submitted_at,
+        candidates (id, full_name, company, id_number, specialty, certificates)`, { count: 'exact' })
+      .order('submitted_at', { ascending: false });
 
-export function logoutCommitteeMember() {
-  const session = getCommitteeSession();
-  if (session) {
-    logAudit({
-      actorType: 'committee_member', actorId: session.id, actorName: session.fullName,
-      action: 'logout', entityType: 'member', entityId: session.id,
-    });
-  }
-  localStorage.removeItem('committee_session');
-}
+    const from = (page - 1) * limit;
+    query = query.range(from, from + limit - 1);
 
-/**
- * جلب كل أعضاء اللجنة (لوحة الإدارة) — يتطلب تسجيل دخول إداري (authenticated)
- */
-export async function fetchCommitteeMembers() {
-  try {
-    const { data, error } = await supabase
-      .from('committee_members')
-      .select('id, full_name, username, member_order, is_active, created_at')
-      .order('member_order', { ascending: true });
+    const { data, error, count } = await query;
     if (error) throw error;
-    return { success: true, data };
+
+    let filtered = data || [];
+    if (search) {
+      const s = search.toLowerCase();
+      filtered = filtered.filter(r =>
+        r.candidates?.full_name?.toLowerCase().includes(s) ||
+        r.candidates?.company?.toLowerCase().includes(s) ||
+        r.candidates?.id_number?.includes(s)
+      );
+    }
+    if (specialty) {
+      filtered = filtered.filter(r => r.candidates?.specialty === specialty);
+    }
+
+    return { success: true, data: filtered, total: count || 0 };
   } catch (error) {
     return { success: false, data: [], error: error.message };
   }
 }
 
-/**
- * إضافة عضو لجنة جديد — من لوحة الإدارة (تتطلب تسجيل دخول إداري)
- * ملاحظة: إضافة العضو تتم بدون كلمة مرور أولية؛ يجب استخدام
- * admin_reset_committee_password فوراً بعد الإنشاء لتعيين كلمة مرور bcrypt
- */
-export async function addCommitteeMember({ fullName, username, password, memberOrder }) {
+export async function fetchResultDetail(resultId) {
   try {
     const { data, error } = await supabase
-      .from('committee_members')
-      .insert({
-        full_name: fullName,
-        username: username.trim().toLowerCase(),
-        member_order: memberOrder,
-        is_active: true,
-      })
-      .select()
+      .from('results')
+      .select(`*, candidates (*), exam_answers (*)`)
+      .eq('id', resultId)
       .single();
     if (error) throw error;
-
-    // تعيين كلمة المرور الأولى عبر الدالة الآمنة (bcrypt على الخادم)
-    const { error: pwError } = await supabase.rpc('admin_reset_committee_password', {
-      p_member_id: data.id,
-      p_new_password: password,
-    });
-    if (pwError) throw pwError;
-
-    await logAudit({
-      actorType: 'admin', action: 'create', entityType: 'member', entityId: data.id,
-      details: { fullName, username },
-    });
-
     return { success: true, data };
   } catch (error) {
     return { success: false, error: error.message };
   }
 }
 
-/**
- * إعادة تعيين كلمة مرور عضو من لوحة الإدارة — الآن عبر RPC آمن (bcrypt)
- */
-export async function resetCommitteeMemberPassword(memberId, newPassword) {
+export async function fetchDashboardStats() {
   try {
-    const { error } = await supabase.rpc('admin_reset_committee_password', {
-      p_member_id: memberId,
-      p_new_password: newPassword,
-    });
+    const { data, error } = await supabase
+      .from('results')
+      .select(`id, score, passed, submitted_at, candidates (specialty, full_name, company)`);
     if (error) throw error;
 
-    await logAudit({
-      actorType: 'admin', action: 'reset_password', entityType: 'member', entityId: memberId,
+    const total = data.length;
+    const passed = data.filter(r => r.passed).length;
+    const avgScore = total > 0 ? Math.round(data.reduce((s, r) => s + r.score, 0) / total) : 0;
+    const maxScore = total > 0 ? Math.max(...data.map(r => r.score)) : 0;
+
+    const bySpecialty = {};
+    data.forEach(r => {
+      const sp = r.candidates?.specialty || 'غير محدد';
+      if (!bySpecialty[sp]) bySpecialty[sp] = { total: 0, passed: 0, scores: [] };
+      bySpecialty[sp].total++;
+      if (r.passed) bySpecialty[sp].passed++;
+      bySpecialty[sp].scores.push(r.score);
     });
 
-    return { success: true };
+    const specialtyStats = Object.entries(bySpecialty).map(([name, v]) => ({
+      name, total: v.total, passed: v.passed, failed: v.total - v.passed,
+      passRate: v.total > 0 ? Math.round((v.passed / v.total) * 100) : 0,
+      avgScore: v.scores.length > 0 ? Math.round(v.scores.reduce((a, b) => a + b, 0) / v.scores.length) : 0,
+    }));
+
+    const now = new Date();
+    const trend = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const dayData = data.filter(r => r.submitted_at?.startsWith(dateStr));
+      trend.push({
+        date: d.toLocaleDateString('ar-SA', { weekday: 'short', month: 'short', day: 'numeric' }),
+        total: dayData.length,
+        passed: dayData.filter(r => r.passed).length,
+      });
+    }
+
+    return { success: true, stats: { total, passed, failed: total - passed, avgScore, maxScore }, specialtyStats, trend };
   } catch (error) {
     return { success: false, error: error.message };
   }
 }
 
-/**
- * تفعيل / تعطيل عضو لجنة
- */
-export async function setCommitteeMemberActive(memberId, isActive) {
+export async function deleteResult(resultId) {
   try {
-    const { error } = await supabase
-      .from('committee_members')
-      .update({ is_active: isActive })
-      .eq('id', memberId);
+    await supabase.from('exam_answers').delete().eq('result_id', resultId);
+    const { error } = await supabase.from('results').delete().eq('id', resultId);
     if (error) throw error;
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
   }
 }
-
-export { logAudit };
