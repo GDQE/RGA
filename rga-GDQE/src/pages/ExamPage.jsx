@@ -1,14 +1,16 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { C, font } from '../utils/constants';
+import { submitExamSession } from '../services/examService';
 
-export function ExamPage({ candidate, questions, onFinish }) {
+export function ExamPage({ candidate, questions, sessionId, onFinish }) {
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState({});
   const [flagged, setFlagged] = useState(new Set());
   const [timeLeft, setTimeLeft] = useState(15 * 60);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const timerRef = useRef(null);
   const doSubmitRef = useRef(null);
 
@@ -21,16 +23,23 @@ export function ExamPage({ candidate, questions, onFinish }) {
     setConfirmOpen(true);
   };
 
-  const doSubmit = () => {
+  // ملاحظة أمنية: لا يوجد هنا أي حساب للدرجة أو مقارنة بالإجابة الصحيحة —
+  // نُرسل فقط اختيارات المرشح للخادم (عبر submit_exam RPC) وهو من يحسب النتيجة ويقرر النجاح/الرسوب
+  const doSubmit = async () => {
     clearInterval(timerRef.current);
-    const results = questions.map(q => ({
-      ...q,
-      userAnswer: answers[q.id] ?? null,
-      isCorrect: answers[q.id] === q.correct,
+    setSubmitting(true);
+    const payload = questions.map(q => ({
+      question_id: q.id,
+      selected: answers[q.id] ?? null,
     }));
-    const earned = results.filter(r => r.isCorrect).reduce((s, r) => s + r.points, 0);
-    const total = results.reduce((s, r) => s + r.points, 0);
-    onFinish({ results, earned, total, score: Math.round((earned / total) * 100) });
+    const res = await submitExamSession({ sessionId, answers: payload });
+    setSubmitting(false);
+    if (!res.success) {
+      setSubmitError('تعذّر إرسال إجاباتك — تحقق من الاتصال وحاول التسليم مرة أخرى: ' + res.error);
+      setConfirmOpen(false);
+      return;
+    }
+    onFinish({ score: res.score, passed: res.passed, correctCount: res.correctCount, wrongCount: res.wrongCount });
   };
 
   doSubmitRef.current = doSubmit;
@@ -146,8 +155,8 @@ export function ExamPage({ candidate, questions, onFinish }) {
               اجبت على جميع الاسئلة ({questions.length} اسئلة). هل انت متاكد من التسليم؟
             </p>
             <div style={{ display: 'flex', gap: 12 }}>
-              <button onClick={() => setConfirmOpen(false)} style={{ flex: 1, padding: '11px', borderRadius: 10, cursor: 'pointer', background: 'transparent', border: '1px solid ' + C.border, color: C.textSub, fontSize: 14, fontFamily: font }}>رجوع</button>
-              <button onClick={doSubmit} style={{ flex: 1, padding: '11px', borderRadius: 10, cursor: 'pointer', background: C.success, color: '#fff', border: 'none', fontSize: 14, fontWeight: 800, fontFamily: font }}>تسليم الاختبار</button>
+              <button onClick={() => setConfirmOpen(false)} disabled={submitting} style={{ flex: 1, padding: '11px', borderRadius: 10, cursor: submitting ? 'not-allowed' : 'pointer', background: 'transparent', border: '1px solid ' + C.border, color: C.textSub, fontSize: 14, fontFamily: font }}>رجوع</button>
+              <button onClick={doSubmit} disabled={submitting} style={{ flex: 1, padding: '11px', borderRadius: 10, cursor: submitting ? 'not-allowed' : 'pointer', background: C.success, color: '#fff', border: 'none', fontSize: 14, fontWeight: 800, fontFamily: font }}>{submitting ? 'جارٍ الإرسال...' : 'تسليم الاختبار'}</button>
             </div>
           </div>
         </div>
