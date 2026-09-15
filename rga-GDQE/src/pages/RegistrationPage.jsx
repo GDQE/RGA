@@ -4,7 +4,7 @@ import { ErrorBox, LoadingSpinner } from '../components/UI';
 import { C, font, SPECIALTIES, SPECIALTY_ICONS } from '../utils/constants';
 import { supabase } from '../services/supabase';
 
-export function RegistrationPage({ onSubmit }) {
+export function RegistrationPage({ onSubmit, loadError }) {
   const [idNumber, setIdNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -111,6 +111,7 @@ export function RegistrationPage({ onSubmit }) {
                 <p style={{ fontSize: 13, color: C.textSub, textAlign: 'center', marginBottom: 20, fontFamily: font }}>
                   هل هذه بياناتك الصحيحة؟
                 </p>
+                {loadError && <p style={{ fontSize: 13, color: C.danger, textAlign: 'center', marginBottom: 16, fontFamily: font }}>{loadError}</p>}
 
                 <div style={{ display: 'flex', gap: 10 }}>
                   <button onClick={() => { setCandidate(null); setIdNumber(''); }} style={{
