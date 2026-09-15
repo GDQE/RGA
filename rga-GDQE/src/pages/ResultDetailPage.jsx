@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchResultDetail } from '../services/examService';
 import { LoadingPage, Badge } from '../components/UI';
-import { QUESTION_BANK } from '../utils/questionBank';
+import { supabase } from '../services/supabase';
 import { C, font, SPECIALTY_ICONS } from '../utils/constants';
 
 export function ResultDetailPage() {
@@ -10,10 +10,25 @@ export function ResultDetailPage() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [questionsMap, setQuestionsMap] = useState({});
 
   useEffect(() => {
-    fetchResultDetail(id).then(r => {
-      if (r.success) setData(r.data);
+    fetchResultDetail(id).then(async (r) => {
+      if (r.success) {
+        setData(r.data);
+        // نص الأسئلة يُجلب من قاعدة البيانات فقط لعضو الإدارة المسجّل دخوله (authenticated)
+        // ولا يصل أبداً لصفحة الاختبار العامة أو لأي مستخدم غير مسجّل دخول
+        const legacyIds = (r.data.exam_answers || []).map(a => a.question_id).filter(Boolean);
+        if (legacyIds.length > 0) {
+          const { data: qRows } = await supabase
+            .from('questions')
+            .select('legacy_id, text, options')
+            .in('legacy_id', legacyIds);
+          const map = {};
+          (qRows || []).forEach(q => { map[q.legacy_id] = q; });
+          setQuestionsMap(map);
+        }
+      }
       setLoading(false);
     });
   }, [id]);
@@ -31,15 +46,7 @@ export function ResultDetailPage() {
 
   const c = data.candidates;
   const specialty = c?.specialty;
-  const questions = QUESTION_BANK[specialty] || [];
-
-  const getQuestionText = (questionId) => {
-    for (const qs of Object.values(QUESTION_BANK)) {
-      const q = qs.find(q => q.id === questionId);
-      if (q) return q;
-    }
-    return null;
-  };
+  const getQuestionText = (questionId) => questionsMap[questionId] || null;
 
   return (
     <div style={{ minHeight: '100vh', background: C.bg, direction: 'rtl', fontFamily: font, padding: '28px 24px' }}>
