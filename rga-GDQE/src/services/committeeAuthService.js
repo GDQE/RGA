@@ -1,13 +1,5 @@
 import { supabase } from './supabase';
 
-async function hashPassword(password) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
 async function logAudit({ actorType, actorId, actorName, action, entityType, entityId, details }) {
   try {
     await supabase.from('audit_log').insert({
@@ -25,48 +17,45 @@ async function logAudit({ actorType, actorId, actorName, action, entityType, ent
 }
 
 /**
-* تسجيل دخول عضو اللجنة
-*/
+ * تسجيل دخول عضو اللجنة
+ * التحقق الآن يتم بالكامل على الخادم (login_committee_member_v2 RPC):
+ * - كلمة المرور تُرسل عبر HTTPS ولا تُشفَّر في المتصفح
+ * - المقارنة تتم بـ bcrypt داخل قاعدة البيانات
+ * - لا يصل password_hash أبداً للمتصفح (RLS يمنع SELECT مباشر على الجدول أصلاً)
+ */
 export async function loginCommitteeMember({ username, password }) {
   try {
-    const passwordHash = await hashPassword(password);
+    const { data, error } = await supabase.rpc('login_committee_member_v2', {
+      p_username: username,
+      p_password: password,
+    });
 
-    const { data, error } = await supabase
-      .from('committee_members')
-      .select('*')
-      .eq('username', username.trim().toLowerCase())
-      .maybeSingle();
-
-    if (error) throw error;
-
-    if (!data) {
+    if (error) {
       return { success: false, error: 'اسم المستخدم أو كلمة المرور غير صحيحة' };
     }
-    if (data.password_hash !== passwordHash) {
+    const row = data?.[0];
+    if (!row) {
       return { success: false, error: 'اسم المستخدم أو كلمة المرور غير صحيحة' };
-    }
-    if (!data.is_active) {
-      return { success: false, error: 'حسابك معطّل، يرجى التواصل مع الإدارة' };
     }
 
     const session = {
-      id: data.id,
-      fullName: data.full_name,
-      username: data.username,
-      memberOrder: data.member_order,
+      id: row.id,
+      fullName: row.full_name,
+      username: row.username,
+      memberOrder: row.member_order,
       loginAt: new Date().toISOString(),
     };
     localStorage.setItem('committee_session', JSON.stringify(session));
 
     await logAudit({
-      actorType: 'committee_member', actorId: data.id, actorName: data.full_name,
-      action: 'login', entityType: 'member', entityId: data.id,
+      actorType: 'committee_member', actorId: row.id, actorName: row.full_name,
+      action: 'login', entityType: 'member', entityId: row.id,
     });
 
     return { success: true, member: session };
   } catch (error) {
     console.error('Login committee member error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: 'حدث خطأ أثناء تسجيل الدخول' };
   }
 }
 
@@ -91,8 +80,8 @@ export function logoutCommitteeMember() {
 }
 
 /**
-* جلب كل أعضاء اللجنة (لوحة الإدارة)
-*/
+ * جلب كل أعضاء اللجنة (لوحة الإدارة) — يتطلب تسجيل دخول إداري (authenticated)
+ */
 export async function fetchCommitteeMembers() {
   try {
     const { data, error } = await supabase
@@ -107,22 +96,30 @@ export async function fetchCommitteeMembers() {
 }
 
 /**
-* إضافة عضو لجنة جديد (مثلاً عضو رابع)
-*/
+ * إضافة عضو لجنة جديد — من لوحة الإدارة (تتطلب تسجيل دخول إداري)
+ * ملاحظة: إضافة العضو تتم بدون كلمة مرور أولية؛ يجب استخدام
+ * admin_reset_committee_password فوراً بعد الإنشاء لتعيين كلمة مرور bcrypt
+ */
 export async function addCommitteeMember({ fullName, username, password, memberOrder }) {
   try {
-    const passwordHash = await hashPassword(password);
     const { data, error } = await supabase
       .from('committee_members')
       .insert({
         full_name: fullName,
         username: username.trim().toLowerCase(),
-        password_hash: passwordHash,
         member_order: memberOrder,
+        is_active: true,
       })
       .select()
       .single();
     if (error) throw error;
+
+    // تعيين كلمة المرور الأولى عبر الدالة الآمنة (bcrypt على الخادم)
+    const { error: pwError } = await supabase.rpc('admin_reset_committee_password', {
+      p_member_id: data.id,
+      p_new_password: password,
+    });
+    if (pwError) throw pwError;
 
     await logAudit({
       actorType: 'admin', action: 'create', entityType: 'member', entityId: data.id,
@@ -136,15 +133,14 @@ export async function addCommitteeMember({ fullName, username, password, memberO
 }
 
 /**
-* إعادة تعيين كلمة مرور عضو من لوحة الإدارة (بدون إيميل)
-*/
+ * إعادة تعيين كلمة مرور عضو من لوحة الإدارة — الآن عبر RPC آمن (bcrypt)
+ */
 export async function resetCommitteeMemberPassword(memberId, newPassword) {
   try {
-    const passwordHash = await hashPassword(newPassword);
-    const { error } = await supabase
-      .from('committee_members')
-      .update({ password_hash: passwordHash })
-      .eq('id', memberId);
+    const { error } = await supabase.rpc('admin_reset_committee_password', {
+      p_member_id: memberId,
+      p_new_password: newPassword,
+    });
     if (error) throw error;
 
     await logAudit({
@@ -158,8 +154,8 @@ export async function resetCommitteeMemberPassword(memberId, newPassword) {
 }
 
 /**
-* تفعيل / تعطيل عضو لجنة
-*/
+ * تفعيل / تعطيل عضو لجنة
+ */
 export async function setCommitteeMemberActive(memberId, isActive) {
   try {
     const { error } = await supabase
