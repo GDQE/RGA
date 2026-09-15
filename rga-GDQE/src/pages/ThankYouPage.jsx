@@ -1,8 +1,7 @@
 import { RGALogo } from '../components/RGALogo';
 import { C, font } from '../utils/constants';
 
-export function ThankYouPage({ candidate, result, saveStatus }) {
-  const { results } = result;
+export function ThankYouPage({ candidate, questionCount, saveStatus }) {
   const now = new Date();
   const dateStr = now.toLocaleDateString('ar-SA');
   const timeStr = now.toLocaleTimeString('ar-SA');
@@ -85,7 +84,7 @@ export function ThankYouPage({ candidate, result, saveStatus }) {
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: 11, color: C.textMuted, fontFamily: font }}>الاسئلة</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: C.text, fontFamily: font }}>{results.length}أسئلة</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: C.text, fontFamily: font }}>{questionCount}أسئلة</div>
                 </div>
               </div>
 
