@@ -28,7 +28,7 @@ export function LoginPage({ onLogin }) {
 
   return (
     <div style={{
-      minHeight: '100vh', background: `linear-gradient(135deg, #1a2332 0%, #2D3748 50%, #3D4A5C 100%)`,
+      minHeight: '100vh', background: `linear-gradient(135deg, ${C.accent} 0%, ${C.accentLight} 55%, ${C.accentMid} 100%)`,
       display: 'flex', alignItems: 'center', justifyContent: 'center', direction: 'rtl', padding: 20
     }}>
       <div style={{ width: '100%', maxWidth: 420 }}>
@@ -38,7 +38,7 @@ export function LoginPage({ onLogin }) {
             <RGALogo size={56} />
             <div style={{ borderRight: '2px solid rgba(255,255,255,0.2)', paddingRight: 16 }}>
               <div style={{ color: '#fff', fontSize: 20, fontWeight: 900, fontFamily: font }}>الهيئة العامة للطرق</div>
-              <div style={{ color: '#2E7D52', fontSize: 12, fontWeight: 600, fontFamily: font, marginTop: 2 }}>الإدارة العامة للجودة والبيئة</div>
+              <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: 12, fontWeight: 600, fontFamily: font, marginTop: 2 }}>الإدارة العامة للجودة والبيئة</div>
             </div>
           </div>
           <div style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, padding: '6px 16px', display: 'inline-block' }}>
@@ -78,7 +78,7 @@ export function LoginPage({ onLogin }) {
             style={{
               width: '100%', padding: '13px', borderRadius: 12, fontSize: 15, fontWeight: 800,
               cursor: loading ? 'not-allowed' : 'pointer', fontFamily: font,
-              background: loading ? C.border : `linear-gradient(135deg, #2D3748, #1a2332)`,
+              background: loading ? C.border : `linear-gradient(135deg, ${C.accentLight}, ${C.accent})`,
               color: loading ? C.textMuted : '#fff', border: 'none',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
               transition: 'all 0.2s'
