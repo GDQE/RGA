@@ -2,19 +2,25 @@ import { useState } from 'react';
 import { TopBar } from '../components/TopBar';
 import { ErrorBox } from '../components/UI';
 import { C, font } from '../utils/constants';
+import { supabase } from '../services/supabase';
 
 export function AccessCodePage({ onSuccess }) {
 const [code, setCode] = useState('');
 const [error, setError] = useState('');
+const [checking, setChecking] = useState(false);
 
-const handleSubmit = () => {
-const correctCode = import.meta.env.VITE_EXAM_ACCESS_CODE;
+const handleSubmit = async () => {
 if (!code.trim()) return setError('يرجى إدخال رمز الدخول');
-if (code.trim().toUpperCase() !== correctCode?.toUpperCase()) {
+setError('');
+setChecking(true);
+// التحقق يتم على الخادم عبر verify_access_code RPC — الرمز الصحيح مخزّن في
+// قاعدة البيانات فقط (جدول app_settings) ولا يصل أبداً لكود الموقع المنشور
+const { data, error: err } = await supabase.rpc('verify_access_code', { p_code: code.trim() });
+setChecking(false);
+if (err || data !== true) {
 setError('رمز الدخول غير صحيح — يرجى التواصل مع المشرف');
 return;
 }
-setError('');
 onSuccess();
 };
 
@@ -47,13 +53,13 @@ autoFocus
 
 <ErrorBox message={error} />
 
-<button onClick={handleSubmit} style={{
+<button onClick={handleSubmit} disabled={checking} style={{
 width: '100%', padding: '13px', borderRadius: 12, fontSize: 15,
-fontWeight: 800, cursor: 'pointer', fontFamily: font,
-background: `linear-gradient(135deg, #2D3748, #1a2332)`,
+fontWeight: 800, cursor: checking ? 'not-allowed' : 'pointer', fontFamily: font,
+background: `linear-gradient(135deg, ${C.accentLight}, ${C.accent})`,
 color: '#fff', border: 'none', marginTop: 4
 }}>
-دخول ←
+{checking ? 'جارٍ التحقق...' : 'دخول ←'}
 </button>
 
 <p style={{ marginTop: 16, fontSize: 12, color: C.textMuted, fontFamily: font }}>
