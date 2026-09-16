@@ -69,12 +69,12 @@ export function CommitteeDashboard() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <RGALogo size={36} />
           <div>
-            <div style={{ fontSize: 14, fontWeight: 800, color: C.text }}>{session?.fullName}</div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: C.text }}>م. {session?.fullName}</div>
             <div style={{ fontSize: 12, color: C.textMuted }}>بوابة لجنة التقييم</div>
           </div>
         </div>
         <button onClick={handleLogout} style={{ padding: '8px 18px', borderRadius: 8, border: `1px solid ${C.border}`, background: 'transparent', color: C.textSub, fontSize: 13, cursor: 'pointer', fontFamily: font }}>
-          🚪 تسجيل الخروج
+          تسجيل الخروج
         </button>
       </div>
 
