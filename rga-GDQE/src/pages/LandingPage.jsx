@@ -166,19 +166,13 @@ export function LandingPage() {
                   </div>
                 )}
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: hovered === role.id ? role.color : TEXT, fontFamily: font, marginBottom: 4 }}>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: hovered === role.id ? role.color : TEXT, fontFamily: font }}>
                     {role.title}
-                  </div>
-                  <div style={{ fontSize: 12, color: role.color, fontWeight: 600, fontFamily: font, opacity: 0.8 }}>
-                    {role.subtitle}
                   </div>
                 </div>
                 <div style={{ fontSize: 18, color: hovered === role.id ? role.color : BORDER, transition: 'all 0.2s' }}>
                   {'\u2190'}
                 </div>
-              </div>
-              <div style={{ fontSize: 13, color: SUB, fontFamily: font, lineHeight: 1.7, borderTop: '1px solid ' + (hovered === role.id ? role.border : BORDER), paddingTop: 12 }}>
-                {role.desc}
               </div>
             </button>
           ))}
