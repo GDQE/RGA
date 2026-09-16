@@ -78,7 +78,7 @@ const ROLES = [
   },
   {
     id: 'committee',
-    Icon: IconCommittee,
+    Icon: null,
     title: '\u0644\u062C\u0646\u0629 \u0627\u0644\u062A\u0642\u064A\u064A\u0645',
     subtitle: '\u062A\u0642\u064A\u064A\u0645 \u0627\u0644\u0645\u0631\u0634\u062D\u064A\u0646 \u0627\u0644\u0645\u0624\u0647\u0651\u0644\u064A\u0646',
     desc: '\u062A\u0642\u064A\u064A\u0645 \u0627\u0644\u0645\u0631\u0634\u062D\u064A\u0646 \u0627\u0644\u0646\u0627\u062C\u062D\u064A\u0646 \u0641\u064A \u0627\u0644\u0627\u062E\u062A\u0628\u0627\u0631 \u0648\u0627\u0639\u062A\u0645\u0627\u062F \u0627\u0644\u0646\u062A\u0627\u0626\u062C \u0627\u0644\u0646\u0647\u0627\u0626\u064A\u0629',
@@ -159,9 +159,12 @@ export function LandingPage() {
                 display: 'flex', flexDirection: 'column', gap: 12,
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>                <div style={{ width: 52, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'center', background: hovered === role.id ? role.color : '#F8FAFC', borderRadius: 12, transition: 'all 0.2s', flexShrink: 0 }}>
-                  {role.Icon && <role.Icon color={hovered === role.id ? WHITE : role.color} />}
-                </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                {role.Icon && (
+                  <div style={{ width: 52, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'center', background: hovered === role.id ? role.color : '#F8FAFC', borderRadius: 12, transition: 'all 0.2s', flexShrink: 0 }}>
+                    <role.Icon color={hovered === role.id ? WHITE : role.color} />
+                  </div>
+                )}
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 16, fontWeight: 800, color: hovered === role.id ? role.color : TEXT, fontFamily: font, marginBottom: 4 }}>
                     {role.title}
