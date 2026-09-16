@@ -4,6 +4,7 @@ import { TopBar } from '../../components/TopBar';
 import { TextInput, ErrorBox, LoadingSpinner } from '../../components/UI';
 import { loginCommitteeMember } from '../../services/committeeAuthService';
 import { C, font } from '../../utils/constants';
+import { RGALogo } from '../../components/RGALogo';
 
 export function CommitteeLoginPage() {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export function CommitteeLoginPage() {
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 16px' }}>
         <div style={{ width: '100%', maxWidth: 420 }}>
           <div style={{ textAlign: 'center', marginBottom: 24 }}>
-            <div style={{ fontSize: 44, marginBottom: 10 }}>⚖️</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}><RGALogo size={48} /></div>
             <h1 style={{ margin: '0 0 6px', fontSize: 22, fontWeight: 900, color: C.text, fontFamily: font }}>بوابة لجنة التقييم</h1>
             <p style={{ margin: 0, color: C.textSub, fontSize: 14, fontFamily: font }}>سجّل دخولك لتقييم المرشحين المُحوّلين للجنة</p>
           </div>
