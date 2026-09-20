@@ -8,7 +8,7 @@ export const REQUIRED_DOC_TYPES = [
 ];
 
 /**
-* رفع ملف واحد إلى Supabase Storage
+* رفع ملف واحد إلى Supabase Storage (مخزن خاص Private)
 */
 async function uploadFile(file, candidateId, docType) {
   const ext = file.name.split('.').pop();
@@ -20,11 +20,25 @@ async function uploadFile(file, candidateId, docType) {
 
   if (error) throw error;
 
-  const { data: urlData } = supabase.storage
-    .from('candidate-documents')
-    .getPublicUrl(fileName);
+  // المخزن خاص (Private) الآن — لا يوجد رابط عام دائم، فقط نخزّن المسار
+  // ونولّد رابط مؤقت صالح لمدة محدودة عند الحاجة الفعلية للعرض (getSignedDocumentUrl)
+  return { path: fileName, size: file.size };
+}
 
-  return { path: fileName, url: urlData.publicUrl, size: file.size };
+/**
+* توليد رابط مؤقت (صالح لمدة قصيرة فقط) لعرض/تحميل مستند من المخزن الخاص
+* يُستخدم بدل الروابط الدائمة — لا يعمل إلا لمن يملك صلاحية الوصول لهذه الدالة
+*/
+export async function getSignedDocumentUrl(path, expiresInSeconds = 300) {
+  try {
+    const { data, error } = await supabase.storage
+      .from('candidate-documents')
+      .createSignedUrl(path, expiresInSeconds);
+    if (error) throw error;
+    return { success: true, url: data.signedUrl };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 }
 
 /**
@@ -66,7 +80,7 @@ export async function createCandidateWithDocuments({ candidateInfo, firmId, file
           candidate_id: candidate.id,
           doc_type: docType,
           doc_name: file.name,
-          file_url: uploaded.url,
+          file_url: uploaded.path,
           file_size: uploaded.size,
           is_required: true,
           status: 'pending',
