@@ -148,7 +148,7 @@ return (
        {/* OVERVIEW TAB */}
        {tab === 'overview' && stats && (
          <div>
-           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 28 }}>
+           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, marginBottom: 28 }}>
              <StatCard label="إجمالي المختبرين" value={stats.stats.total} color="#1B5E35" />
              <StatCard label="المؤهلين" value={stats.stats.passed}
                sub={`${stats.stats.total > 0 ? Math.round((stats.stats.passed / stats.stats.total) * 100) : 0}% نسبة النجاح`}
