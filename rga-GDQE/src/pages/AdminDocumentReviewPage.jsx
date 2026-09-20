@@ -4,7 +4,7 @@ import {
   fetchCandidatesPendingApproval, approveCandidateDocuments,
   flagCandidateForReview, rejectCandidateApplication,
 } from '../services/documentCheckService';
-import { REQUIRED_DOC_TYPES } from '../services/firmCandidateService';
+import { REQUIRED_DOC_TYPES, getSignedDocumentUrl } from '../services/firmCandidateService';
 import { C, font, SPECIALTY_ICONS } from '../utils/constants';
 import toast from 'react-hot-toast';
 
@@ -122,9 +122,15 @@ export function AdminDocumentReviewPage() {
                           }}>
                             <div style={{ fontWeight: 700, color: C.text, marginBottom: 4 }}>{docType.icon} {docType.label}</div>
                             {doc ? (
-                              <a href={doc.file_url} target="_blank" rel="noreferrer" style={{ color: C.success, textDecoration: 'none', fontSize: 11 }}>
+                              <button
+                                onClick={async () => {
+                                  const res = await getSignedDocumentUrl(doc.file_url);
+                                  if (res.success) window.open(res.url, '_blank', 'noopener,noreferrer');
+                                  else toast.error('تعذّر فتح الملف');
+                                }}
+                                style={{ color: C.success, background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: 11, fontFamily: font, textDecoration: 'underline' }}>
                                 ↗ عرض الملف
-                              </a>
+                              </button>
                             ) : (
                               <span style={{ color: C.danger, fontSize: 11 }}>لم يُرفع</span>
                             )}
