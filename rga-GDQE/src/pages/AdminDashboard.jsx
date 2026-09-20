@@ -6,6 +6,37 @@ LineChart, Line, PieChart, Pie, Cell, Legend
 } from 'recharts';
 import { RGALogo } from '../components/RGALogo';
 import { LoadingSpinner, Badge, StatCard } from '../components/UI';
+
+const IconUsers = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+);
+const IconCheck = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M8.5 12.5l2.5 2.5 4.5-5" />
+  </svg>
+);
+const IconX = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M9.5 9.5l5 5M14.5 9.5l-5 5" />
+  </svg>
+);
+const IconChart = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 3v18h18" />
+    <path d="M7 16l4-4 3 3 5-6" />
+  </svg>
+);
+const IconStar = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2l2.9 6.5 7.1.6-5.4 4.7 1.6 7-6.2-3.8L6 21l1.6-7L2.2 9.1l7.1-.6z" />
+  </svg>
+);
 import { fetchAllResults, fetchDashboardStats, deleteResult } from '../services/examService';
 import { signOut } from '../services/authService';
 import { C, font, SPECIALTIES, SPECIALTY_ICONS } from '../utils/constants';
@@ -149,13 +180,13 @@ return (
        {tab === 'overview' && stats && (
          <div>
            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, marginBottom: 28 }}>
-             <StatCard label="إجمالي المختبرين" value={stats.stats.total} color="#1B5E35" />
-             <StatCard label="المؤهلين" value={stats.stats.passed}
+             <StatCard icon={<IconUsers />} label="إجمالي المختبرين" value={stats.stats.total} color="#1B5E35" />
+             <StatCard icon={<IconCheck />} label="المؤهلين" value={stats.stats.passed}
                sub={`${stats.stats.total > 0 ? Math.round((stats.stats.passed / stats.stats.total) * 100) : 0}% نسبة النجاح`}
                color="#1B5E35" />
-             <StatCard label="غير مؤهلين" value={stats.stats.failed} color="#C0392B" />
-             <StatCard label="متوسط الدرجات" value={`${stats.stats.avgScore}%`} color="#C49A28" />
-             <StatCard label="أعلى درجة" value={`${stats.stats.maxScore}%`} color="#C49A28" />
+             <StatCard icon={<IconX />} label="غير مؤهلين" value={stats.stats.failed} color="#C0392B" />
+             <StatCard icon={<IconChart />} label="متوسط الدرجات" value={`${stats.stats.avgScore}%`} color="#C49A28" />
+             <StatCard icon={<IconStar />} label="أعلى درجة" value={`${stats.stats.maxScore}%`} color="#C49A28" />
            </div>
 
            <div style={{ background: C.surface, borderRadius: 16, padding: 24, boxShadow: C.shadow, border: `1px solid ${C.border}`, marginBottom: 24 }}>
