@@ -130,15 +130,14 @@ export function StatCard({ icon, label, value, sub, color = C.accentMid }) {
       display: 'flex', alignItems: 'center', gap: 16
     }}>
       <div style={{
-        width: 52, height: 52, borderRadius: 14, flexShrink: 0,
+        minWidth: 52, height: 52, borderRadius: 14, flexShrink: 0, padding: '0 8px',
         background: `${color}18`, display: 'flex', alignItems: 'center',
-        justifyContent: 'center', fontSize: 24
+        justifyContent: 'center', color
       }}>
-        {icon}
+        <span style={{ fontSize: 20, fontWeight: 900, fontFamily: font, lineHeight: 1 }}>{value}</span>
       </div>
       <div>
-        <div style={{ fontSize: 26, fontWeight: 900, color, fontFamily: font, lineHeight: 1.2 }}>{value}</div>
-        <div style={{ fontSize: 13, color: C.text, fontWeight: 600, fontFamily: font }}>{label}</div>
+        <div style={{ fontSize: 13, color: C.text, fontWeight: 700, fontFamily: font }}>{label}</div>
         {sub && <div style={{ fontSize: 11, color: C.textMuted, fontFamily: font, marginTop: 2 }}>{sub}</div>}
       </div>
     </div>
