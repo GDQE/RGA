@@ -125,20 +125,20 @@ export function Badge({ children, color = 'default' }) {
 export function StatCard({ icon, label, value, sub, color = C.accentMid }) {
   return (
     <div style={{
-      background: C.surface, borderRadius: 16, padding: '20px 24px',
+      background: C.surface, borderRadius: 16, padding: '20px 16px',
       boxShadow: C.shadow, border: `1px solid ${C.border}`,
-      display: 'flex', alignItems: 'center', gap: 16
+      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, textAlign: 'center'
     }}>
       <div style={{
-        minWidth: 52, height: 52, borderRadius: 14, flexShrink: 0, padding: '0 8px',
+        minWidth: 52, height: 52, borderRadius: 14, flexShrink: 0, padding: '0 10px',
         background: `${color}18`, display: 'flex', alignItems: 'center',
         justifyContent: 'center', color
       }}>
-        <span style={{ fontSize: 20, fontWeight: 900, fontFamily: font, lineHeight: 1 }}>{value}</span>
+        <span style={{ fontSize: 20, fontWeight: 900, fontFamily: font, lineHeight: 1, whiteSpace: 'nowrap' }}>{value}</span>
       </div>
       <div>
-        <div style={{ fontSize: 13, color: C.text, fontWeight: 700, fontFamily: font }}>{label}</div>
-        {sub && <div style={{ fontSize: 11, color: C.textMuted, fontFamily: font, marginTop: 2 }}>{sub}</div>}
+        <div style={{ fontSize: 13, color, fontWeight: 700, fontFamily: font, whiteSpace: 'nowrap' }}>{label}</div>
+        {sub && <div style={{ fontSize: 11, color: C.textMuted, fontFamily: font, marginTop: 2, whiteSpace: 'nowrap' }}>{sub}</div>}
       </div>
     </div>
   );
